@@ -1,5 +1,5 @@
 import {createNewShape} from '../createNewShape'
-import calcPositionInCanvas from '../calculation/calcPositionInCanvas'
+import {calcPositionInCanvas} from '../calculation/calcPosition'
 import getUIParameters from '../../common/getUIParameters'
 
 let currentShape = null

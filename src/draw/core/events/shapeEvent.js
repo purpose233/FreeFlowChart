@@ -1,4 +1,4 @@
-import calcPositionInCanvas from '../calculation/calcPositionInCanvas'
+import {calcPositionInCanvas} from '../calculation/calcPosition'
 import controllerDraw from '../../draw/controller'
 import {createNewLine} from '../createNewShape'
 

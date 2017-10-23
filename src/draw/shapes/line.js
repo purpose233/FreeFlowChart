@@ -1,4 +1,6 @@
 import {getDefaultSetting, drawingDefaultSetting} from './shapeDefaultSetting'
+import {calcPointToPointDistance, calcPointToLineDistance} from "../core/calculation/calcDistance";
+import {calcPointToLineFoot} from "../core/calculation/calcPosition";
 
 let lineId = 0
 const lineAreaWidth = 7
@@ -198,7 +200,7 @@ class Line {
     }
     return [ x1, y1, x2, y2 ]
   }
-  clearCanvs () {
+  clearCanvas () {
     this.canvas.width = this.width
   }
   calcArrowAngle () {
@@ -235,7 +237,7 @@ class Line {
     }
   }
   draw (referMark, isSelected) {
-    this.clearCanvs()
+    this.clearCanvas()
     this.resetDrawStyle()
     this.calcDrawingBeginEndPoints()
 
@@ -276,29 +278,12 @@ class Line {
     switch  (this.linkerType) {
       case 'straight':
         // Calculate the distance from point to line.
-        // Line equation: Ax + By + C = 0
-        let A = (y1 - y2) / (x1 - x2)
-        let B = -1
-        let C = y2 - A * x2
-        let distance = (A * x + B * y + C) / Math.sqrt(A * A + B * B)
-        let footX = (B * B * x - A * B * y - A * C) / (A * A + B * B)
-        let footY = (-A * B * x + A * A * y - B * C) / (A * A + B * B)
+        let distance = calcPointToLineDistance([x, y], [x1, y1, x2, y2])
+        let foot = calcPointToLineFoot([x, y], [x1, y1, x2, y2])
+
         return (distance <= lineAreaWidth && distance >= -lineAreaWidth
-          && this.isPointInLineRectangle(footX, footY))
-        /*
-        if (x1 === x2) {
-          // when the intercept is INF
-          let yBig = (y1 >= y2) ? y1 : y2
-          let ySmall = (yBig === y2) ? y1 : y2
-          return (x <= x1 + lineAreaWidth && x >= x1 - lineAreaWidth && y >= ySmall && y <= yBig)
-        }
-        else {
-          let calcY = (x - x2) * (y1 - y2) / (x1 - x2) - (y - y2)
-          let calcWidth = lineAreaWidth * Math.sqrt(1 + Math.pow((y1 - y2) / (x1 - x2), 2))
-          let xBig = (x1 >= x2) ? x1 : x2
-          let xSmall = (xBig === x2) ? x1 : x2
-          return (calcY <= calcWidth && calcY >= -calcWidth && x >= xSmall && x <= xBig)
-        }*/
+          && this.isPointInLineRectangle(foot.x, foot.y))
+
         break;
       case 'bezier':
         break;
@@ -306,12 +291,13 @@ class Line {
   }
   isInLineEnd (x, y) {
     let [ x1, y1, x2, y2 ] = this.calcJudgingBeginEndPoints()
-    let distanceSrc = (x - x1) * (x - x1) + (y - y1) * (y - y1)
-    let distanceDest = (x - x2) * (x - x2) + (y - y2) * (y - y2)
-    if (distanceDest <= lineAreaWidth * lineAreaWidth) {
+    let distanceSrc = calcPointToPointDistance([x, y], [x1, y1])
+    let distanceDest = calcPointToPointDistance([x, y], [x2, y2])
+
+    if (distanceDest <= lineAreaWidth) {
      return 'lineDest'
     }
-    else if (distanceSrc <= lineAreaWidth * lineAreaWidth) {
+    else if (distanceSrc <= lineAreaWidth) {
       return 'lineSrc'
     }
     return null
