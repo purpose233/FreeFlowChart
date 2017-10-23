@@ -1,0 +1,75 @@
+html, body {
+  margin: 0; }
+
+.draw-main {
+  width: 100%; }
+  .draw-main #draw-components {
+    width: 160px;
+    position: absolute;
+    border-right: 1px solid gray;
+    height: 800px; }
+    .draw-main #draw-components .component-box {
+      cursor: pointer;
+      width: 30px;
+      height: 30px; }
+  .draw-main #draw-layout {
+    background: gray;
+    margin-left: 160px;
+    height: 800px;
+    overflow: scroll; }
+    .draw-main #draw-layout #draw-container {
+      position: relative;
+      padding: 1000px;
+      width: 3250px;
+      height: 3500px;
+      overflow: hidden; }
+      .draw-main #draw-layout #draw-container #designer_canvas {
+        width: 100%;
+        height: 100%;
+        position: relative; }
+        .draw-main #draw-layout #draw-container #designer_canvas #canvas-background {
+          width: 1250px;
+          height: 1500px;
+          background: ghostwhite;
+          z-index: 0; }
+        .draw-main #draw-layout #draw-container #designer_canvas .shape-box {
+          z-index: 1;
+          cursor: move;
+          position: absolute;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none; }
+          .draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-canvas {
+            width: 100%;
+            height: 100%; }
+          .draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text {
+            max-width: calc(100% - 24px);
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            -moz-transform: translateX(-50%) translateY(-50%);
+            -ms-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%); }
+            .draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text:focus {
+              outline: -webkit-focus-ring-color auto 5px; }
+        .draw-main #draw-layout #draw-container #designer_canvas .linker_box {
+          cursor: default;
+          z-index: 2; }
+        .draw-main #draw-layout #draw-container #designer_canvas #shape_controls {
+          cursor: move;
+          height: 70px;
+          z-index: 3;
+          display: none;
+          position: absolute; }
+          .draw-main #draw-layout #draw-container #designer_canvas #shape_controls .shape_controller {
+            position: absolute;
+            border: 1px solid #883333;
+            width: 8px;
+            height: 8px;
+            z-index: 1;
+            display: block;
+            background: white; }
+
+/*# sourceMappingURL=draw.css.map */

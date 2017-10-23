@@ -1,0 +1,105 @@
+@mixin select ($select) {
+  -webkit-user-select:$select;
+  -moz-user-select:$select;
+  -ms-user-select:$select;
+  user-select:$select;
+}
+
+@mixin transform ($x, $y) {
+  -webkit-transform: translateX($x) translateY($y);
+  -moz-transform: translateX($x) translateY($y);
+  -ms-transform: translateX($x) translateY($y);
+  transform: translateX($x) translateY($y);
+}
+
+html, body {
+  margin: 0;
+}
+
+.draw-main {
+  width: 100%;
+
+  #draw-components {
+    width: 160px;
+    position: absolute;
+    border-right: 1px solid gray;
+    height: 800px;
+
+    .component-box {
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+
+      .component-item {
+
+      }
+    }
+  }
+
+  #draw-layout {
+    background: gray;
+    margin-left: 160px;
+    height: 800px;
+    overflow: scroll;
+    #draw-container {
+      position: relative;
+      padding: 1000px;
+      width: 3250px;
+      height: 3500px;
+      overflow: hidden;
+      #designer_canvas {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        #canvas-background {
+          width: 1250px;
+          height: 1500px;
+          background: ghostwhite;
+          z-index: 0;
+        }
+        .shape-box {
+          z-index: 1;
+          cursor: move;
+          position: absolute;
+          @include select(none);
+          .shape-canvas {
+            width: 100%;
+            height: 100%;
+          }
+          .shape-text {
+            max-width: calc(100% - 24px);
+            top: 50%;
+            left: 50%;
+            position: absolute;
+            @include transform(-50%, -50%);
+            &:focus{
+              outline: -webkit-focus-ring-color auto 5px;
+            }
+          }
+        }
+        .linker_box {
+          cursor: default;
+          z-index: 2;
+        }
+        #shape_controls {
+          cursor: move;
+          height: 70px;
+          z-index: 3;
+          display: none;
+          position: absolute;
+          #controls_bounding {
+          }
+          .shape_controller {
+            position: absolute;
+            border: 1px solid rgb(136, 51, 51);
+            width: 8px;
+            height: 8px;
+            z-index: 1;
+            display: block;
+            background: white;
+          }
+        }
+      }
+    }
+  }
+}
