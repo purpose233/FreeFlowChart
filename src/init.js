@@ -27,6 +27,24 @@ function createContainer (el) {
   el.innerHTML = drawContainerHtml
 }
 
+function createComponets (el, shapes) {
+  let componentGroup = document.getElementById('draw-components')
+  let tempHtml = ''
+  for (let i = 0; i < instanceSetting.shapes.length; i++) {
+    let shapeName = instanceSetting.shapes[i]
+    tempHtml += `<div class="component-box" shapename="${shapeName}">
+        <canvas class="component-item" width="30" height="30"></canvas>
+    </div>`
+  }
+  componentGroup.innerHTML = tempHtml
+  let componentItems = document.getElementsByClassName('component-box')
+  for (let i = 0; i < instanceSetting.shapes.length; i++) {
+    let shapeName = instanceSetting.shapes[i]
+    let shape = new (getShapeByType(shapeName))(componentItems[i], 'process', -1, -1, 30, 30)
+    shape.draw(2, 5)
+  }
+}
+
 function init (instanceSetting, shapeList) {
   instanceSetting.el.classList.add('draw-main')
   createContainer(instanceSetting.el)
@@ -50,7 +68,7 @@ function init (instanceSetting, shapeList) {
   let canvasBackground = document.getElementById('canvas-background')
   backgroundDraw(canvasBackground)
 
-  let canvasController = document.getElementById('controls_bounding')
+  //let canvasController = document.getElementById('controls_bounding')
 
   let drawLayout = document.getElementById('draw-layout')
   drawLayout.scrollTop = 1000 - 10

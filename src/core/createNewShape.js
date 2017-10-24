@@ -6,7 +6,7 @@ function createNewShape (type, left, top, width, height) {
 
   component.innerHTML = `
     <canvas class="shape-canvas"></canvas>
-    <div class="shape-text" contenteditable="true"></div>`
+    <textarea class="shape-text" contenteditable="true"></textarea>`
 
   let shape = new (getShapeByType(type))(component, type, left, top, width, height)
 
@@ -14,7 +14,7 @@ function createNewShape (type, left, top, width, height) {
   return shape
 }
 
-function createNewLine (src, dist) {
+function createNewLine (src, dist, settings) {
   let component = document.createElement('div')
   component.classList.add('shape-box', 'linker_box')
 
@@ -22,7 +22,7 @@ function createNewLine (src, dist) {
     <canvas class="shape-canvas"></canvas>
     <div class="shape-text" contenteditable="true"></div>`
 
-  let line = new (getShapeByType('line'))(component, src, dist)
+  let line = new (getShapeByType('line'))(component, src, dist, settings)
 
   component.setAttribute('shapeid', line.id)
   return line

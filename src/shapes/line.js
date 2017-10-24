@@ -29,7 +29,7 @@ const delta = 0.1
 // y(t) = (1-t)^3y0 + 3t(1-t)^2y1 + 3t^2(1-t)y2 + t^3y3
 
 class Line {
-  constructor (el, src, dest) {
+  constructor (el, src, dest, settings) {
     this.id = 'line' + lineId++
     this.el = el
     this.canvas = el.getElementsByTagName('canvas')[0]
@@ -39,14 +39,17 @@ class Line {
     this.src = src
     this.dest = dest
 
-    let temp = getDefaultSetting('line')
-    this.linkerType = temp.linkerType
-    this.arrowType = temp.arrowType
-
     this.width = 0
     this.height = 0
     this.left = 0
     this.top = 0
+
+    if (settings) {
+
+    }
+    let temp = getDefaultSetting('line')
+    this.linkerType = temp.linkerType
+    this.arrowType = temp.arrowType
 
     this.strokeStyle = drawingDefaultSetting.strokeStyle
     this.lineWidth = drawingDefaultSetting.lineWidth
@@ -233,6 +236,9 @@ class Line {
         this.context.stroke()
         break;
       case 'bezier':
+        this.context.beginPath()
+        this.context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
+        //this.context.bezierCurveTo()
         break;
     }
   }

@@ -22,8 +22,6 @@ html, body {
   #draw-components {
     width: 160px;
     position: absolute;
-    border-right: 1px solid gray;
-    height: 800px;
 
     .component-box {
       cursor: pointer;
@@ -37,7 +35,7 @@ html, body {
   }
 
   #draw-layout {
-    background: gray;
+    background: #b6b6b6;
     margin-left: 160px;
     height: 800px;
     overflow: scroll;
@@ -67,7 +65,10 @@ html, body {
             height: 100%;
           }
           .shape-text {
-            max-width: calc(100% - 24px);
+            border: none;
+            background: inherit;
+            resize: none;
+            max-width: calc(100% - 26px);
             top: 50%;
             left: 50%;
             position: absolute;

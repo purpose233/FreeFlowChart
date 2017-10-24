@@ -33,6 +33,8 @@ let shapeController = {
     return controllerDraw(this.canvas, width, height, 10)
   }
 }
+let bezierController = {}
+let styleController = {}
 
 let activeShape = null
 let selectedShape = null
@@ -130,7 +132,7 @@ function judgeEventAt (event, shapeList) {
   }
 
   let result, shape
-  let position = calcPositionInCanvas(event.clientX, event.clientY)
+  let position = calcPositionInCanvas(event.pageX, event.pageY)
 
   if (event.target.classList.contains('shape_controller')) {
     return {
@@ -192,7 +194,7 @@ function shapeEventOnMouseDown (event, shapeList) {
   }
 
   let shape = judgeResult.shape, type = judgeResult.type
-  let position = calcPositionInCanvas(event.clientX, event.clientY)
+  let position = calcPositionInCanvas(event.pageX, event.pageY)
   switch (type) {
     case 'lineBody':
       if (lineData.selectedLine) {
@@ -254,13 +256,14 @@ function shapeEventOnMouseDown (event, shapeList) {
       shapeController.draw(shape.width, shape.height)
 
       activeShape = shape
-      clickOffset.x = event.clientX - shape.left
-      clickOffset.y = event.clientY - shape.top
+      clickOffset.x = event.pageX - shape.left
+      clickOffset.y = event.pageY - shape.top
 
       if (lineData.selectedLine) {
         lineData.selectedLine.draw()
         lineData.selectedLine = null
       }
+      event.preventDefault()
       break;
     case 'shapeLineArea':
       let lineReference = shape.getLineReference(position.x, position.y)
@@ -281,8 +284,8 @@ function shapeEventOnMouseDown (event, shapeList) {
       break;
     case 'controller':
       activeDirection = event.target.getAttribute('resizedir')
-      resizeData.beginX = event.clientX
-      resizeData.beginY = event.clientY
+      resizeData.beginX = event.pageX
+      resizeData.beginY = event.pageY
       resizeData.originWidth = selectedShape.width
       resizeData.originHeight = selectedShape.height
       resizeData.originLeft = selectedShape.left
@@ -339,7 +342,7 @@ function shapeEventOnMouseMove (event, shapeList) {
       }
       dest = {
         shape: null,
-        position: calcPositionInCanvas(event.clientX, event.clientY)
+        position: calcPositionInCanvas(event.pageX, event.pageY)
       }
 
       lineData.activeLine = createNewLine(src, dest)
@@ -347,7 +350,7 @@ function shapeEventOnMouseMove (event, shapeList) {
       lineData.activeLine.append()
     }
     else {
-      let position = calcPositionInCanvas(event.clientX, event.clientY)
+      let position = calcPositionInCanvas(event.pageX, event.pageY)
       let judgeResult = judgeEventAt(event, shapeList)
       if (!judgeResult) {
         redrawActiveLine(null, {position: position})
@@ -388,8 +391,8 @@ function shapeEventOnMouseMove (event, shapeList) {
     let width, height, offsetX, offsetY
     switch (activeDirection) {
       case 'nw':
-        width = resizeData.beginX - event.clientX + resizeData.originWidth
-        height = resizeData.beginY - event.clientY + resizeData.originHeight
+        width = resizeData.beginX - event.pageX + resizeData.originWidth
+        height = resizeData.beginY - event.pageY + resizeData.originHeight
         width = (width >= 60) ? width : 60
         height = (height >= 45) ? height : 45
         offsetX = width - resizeData.originWidth
@@ -400,8 +403,8 @@ function shapeEventOnMouseMove (event, shapeList) {
         shapeController.reset(selectedShape.left, selectedShape.top, width, height)
         break;
       case 'ne':
-        width = event.clientX - resizeData.beginX + resizeData.originWidth
-        height = resizeData.beginY - event.clientY + resizeData.originHeight
+        width = event.pageX - resizeData.beginX + resizeData.originWidth
+        height = resizeData.beginY - event.pageY + resizeData.originHeight
         width = (width >= 60) ? width : 60
         height = (height >= 45) ? height : 45
         offsetX = width - resizeData.originWidth
@@ -412,8 +415,8 @@ function shapeEventOnMouseMove (event, shapeList) {
         shapeController.reset(selectedShape.left, selectedShape.top, width, height)
         break;
       case 'se':
-        width = event.clientX - resizeData.beginX + resizeData.originWidth
-        height = event.clientY - resizeData.beginY + resizeData.originHeight
+        width = event.pageX - resizeData.beginX + resizeData.originWidth
+        height = event.pageY - resizeData.beginY + resizeData.originHeight
         width = (width >= 60) ? width : 60
         height = (height >= 45) ? height : 45
 
@@ -421,8 +424,8 @@ function shapeEventOnMouseMove (event, shapeList) {
         shapeController.reset(selectedShape.left, selectedShape.top, width, height)
         break;
       case 'sw':
-        width = resizeData.beginX - event.clientX + resizeData.originWidth
-        height = event.clientY - resizeData.beginY + resizeData.originHeight
+        width = resizeData.beginX - event.pageX + resizeData.originWidth
+        height = event.pageY - resizeData.beginY + resizeData.originHeight
         width = (width >= 60) ? width : 60
         height = (height >= 45) ? height : 45
         offsetX = width - resizeData.originWidth
@@ -438,8 +441,8 @@ function shapeEventOnMouseMove (event, shapeList) {
     shapeController.draw(width, height)
   }
   else if (activeShape) {
-    let x = event.clientX - clickOffset.x
-    let y = event.clientY - clickOffset.y
+    let x = event.pageX - clickOffset.x
+    let y = event.pageY - clickOffset.y
     activeShape.setPosition(x, y)
     shapeController.reset(x, y, activeShape.width, activeShape.height)
     activeShape.resetLinesPosition()
@@ -538,6 +541,7 @@ function shapeEventOnDblClick (event, shapeList) {
   switch (judgeResult.type) {
     case 'shapeBody':
       judgeResult.shape.shapeText.focus()
+      document.execCommand('selectAll')
       break;
     default:
       shapeController.setVisibility(false)

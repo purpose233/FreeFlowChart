@@ -70,4 +70,24 @@ _.debounce = function (func, wait) {
   return debounced
 }
 
+_.isObject = function (list) {
+  return (typeof list === 'object' || typeof list === 'function')
+}
+
+_.isArray = function (list) {
+  return Array.isArray(list)
+}
+
+_.contains = function (list, value) {
+  if (!_.isObject(list)) {
+    return list === value
+  }
+  else {
+    for (let i in list) {
+      if (value === list[i]) { return true }
+    }
+  }
+  return false
+}
+
 export default _

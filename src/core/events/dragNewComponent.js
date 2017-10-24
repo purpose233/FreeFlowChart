@@ -29,13 +29,13 @@ function dragNewComponetMouseMove (event, shapeList) {
 function dragNewComponetMouseUp (event, shapeList) {
   mouseDown = false
 
-  if (currentShape && event.clientX <= getUIParameters().canvasLeft) {
+  if (currentShape && event.pageX <= getUIParameters().canvasLeft) {
     currentShape.remove()
   }
   else if (currentShape) {
-    //let left = (event.clientX - currentShape.width / 2 - toolbarWidth) - (padding - drawLayout.scrollLeft)
-    //let top = (event.clientY - currentShape.height / 2 - headerHeight) - (padding - drawLayout.scrollTop)
-    let position = calcPositionInCanvas(event.clientX, event.clientY)
+    //let left = (event.pageX - currentShape.width / 2 - toolbarWidth) - (padding - drawLayout.scrollLeft)
+    //let top = (event.pageY - currentShape.height / 2 - headerHeight) - (padding - drawLayout.scrollTop)
+    let position = calcPositionInCanvas(event.pageX, event.pageY)
     let left = position.x - currentShape.width / 2
     let top = position.y - currentShape.height / 2
 

@@ -1,14 +1,33 @@
 import init from './init'
 
 (function (window, document) {
+  // settings: {
+  //   el: the container of drawing
+  //   shapes: enabled shapes
+  //   toolbar: {
+  //     el: the container of toolbar
+  //     tools: enabled tools
+  //   }
+  // }
   const defaultInstanceSettings = {
-    shapes: ['process']
+    el: null,
+    shapes: ['process'],
+    toolbar: {
+      el: null,
+      tools: ['undo', 'redo',
+        'bold', 'italic', 'underline',
+        'fontName', 'fontSize', 'fontColor',
+        'fillStyle', 'strokeStyle', 'lineWidth', 'lineDash',
+        'linkerType', 'arrowType'
+      ]
+    }
   }
 
   function cloneObject (o) {
     let clone = {}
-    for (let prop in o)
+    for (let prop in o) {
       clone[prop] = o[prop]
+    }
     return clone
   }
 
@@ -18,8 +37,16 @@ import init from './init'
 
   function replaceObjectProps (target, source) {
     let clone = cloneObject(target)
-    for (let prop in clone)
-      clone[prop] = hasProp(source, prop) ? source[prop] : clone[prop]
+    for (let prop in clone) {
+      if (typeof clone[prop] !== 'object') {
+        clone[prop] = hasProp(source, prop) ? source[prop] : clone[prop]
+      }
+      else {
+        if (source[prop]) {
+          clone[prop] = replaceObjectProps(clone[prop], source[prop])
+        }
+      }
+    }
     return clone
   }
 
