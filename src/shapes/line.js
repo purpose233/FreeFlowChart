@@ -1,6 +1,7 @@
 import {getDefaultSetting, drawingDefaultSetting} from './shapeDefaultSetting'
 import {calcPointToPointDistance, calcPointToLineDistance} from "../core/calculation/calcDistance";
 import {calcPointToLineFoot} from "../core/calculation/calcPosition";
+import colors from '../common/colors'
 
 let lineId = 0
 const lineAreaWidth = 7
@@ -162,7 +163,7 @@ class Line {
     }
     this.context.beginPath()
     this.context.arc(position.x, position.y, 10, 0, 2 * Math.PI)
-    this.context.fillStyle = 'rgba(237, 65, 65, 0.5)'
+    this.context.fillStyle = colors.lineArrowHightlight
     this.context.fill()
   }
   calcDrawingBeginEndPoints () {
@@ -238,7 +239,11 @@ class Line {
       case 'bezier':
         this.context.beginPath()
         this.context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
-        //this.context.bezierCurveTo()
+        this.context.bezierCurveTo(this.bezierControlPoints[0].x, this.bezierControlPoints[0].y,
+          this.bezierControlPoints[1].x, this.bezierControlPoints[1].y,
+          this.drawEndPosition.x, this.drawEndPosition.y)
+        this.context.stroke()
+        this.context.beginPath()
         break;
     }
   }
@@ -253,7 +258,7 @@ class Line {
 
     this.drawLineBody()
     if (isSelected) {
-      this.context.strokeStyle = 'rgba(237, 65, 65, 0.15)'
+      this.context.strokeStyle = colors.lineBodyHighlight
       this.context.lineWidth = 6
       this.drawLineBody()
     }

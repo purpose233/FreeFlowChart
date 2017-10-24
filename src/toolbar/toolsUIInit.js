@@ -3,7 +3,7 @@ import {tools, toolsGroup, simplyToolTypes, hintData} from './toolbarDefaultSett
 
 function getToolHtml (type) {
   if (_.contains(simplyToolTypes, type)) {
-    return `<div id="tool_${type}" class="toolbar-button" hint-data="">
+    return `<div id="tool_${type}" class="toolbar-button" hint-data="${hintData[type]}">
       <div class="ico ${type}"></div>
     </div>`
   }
@@ -29,8 +29,15 @@ function createTools (el, enabledTools) {
   el.innerHTML = html
 }
 
-function toolUIInit (el, enabledTools, hint) {
+function createHint (el) {
 
+}
+
+function toolUIInit (el, enabledTools, hint) {
+  createTools(el, enabledTools)
+  if (hint) {
+    createHint(el)
+  }
 }
 
 export default toolUIInit

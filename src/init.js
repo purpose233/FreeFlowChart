@@ -1,6 +1,7 @@
 import getShapeByType from './shapes/index'
 import backgroundDraw from './draw/background'
 import {eventList, getEventHandlers} from './core/events/index'
+import getToolbar from './toolbar/toolbar'
 
 const drawContainerHtml = `<div class="draw-main">
     <div id="draw-components">
@@ -28,18 +29,18 @@ function createContainer (el) {
 }
 
 function createComponets (el, shapes) {
-  let componentGroup = document.getElementById('draw-components')
+  let componentGroup = el
   let tempHtml = ''
-  for (let i = 0; i < instanceSetting.shapes.length; i++) {
-    let shapeName = instanceSetting.shapes[i]
+  for (let i = 0; i < shapes.length; i++) {
+    let shapeName = shapes[i]
     tempHtml += `<div class="component-box" shapename="${shapeName}">
         <canvas class="component-item" width="30" height="30"></canvas>
     </div>`
   }
   componentGroup.innerHTML = tempHtml
   let componentItems = document.getElementsByClassName('component-box')
-  for (let i = 0; i < instanceSetting.shapes.length; i++) {
-    let shapeName = instanceSetting.shapes[i]
+  for (let i = 0; i < shapes.length; i++) {
+    let shapeName = shapes[i]
     let shape = new (getShapeByType(shapeName))(componentItems[i], 'process', -1, -1, 30, 30)
     shape.draw(2, 5)
   }
@@ -47,28 +48,13 @@ function createComponets (el, shapes) {
 
 function init (instanceSetting, shapeList) {
   instanceSetting.el.classList.add('draw-main')
+
   createContainer(instanceSetting.el)
 
-  let componentGroup = document.getElementById('draw-components')
-  let tempHtml = ''
-  for (let i = 0; i < instanceSetting.shapes.length; i++) {
-    let shapeName = instanceSetting.shapes[i]
-    tempHtml += `<div class="component-box" shapename="${shapeName}">
-        <canvas class="component-item" width="30" height="30"></canvas>
-    </div>`
-  }
-  componentGroup.innerHTML = tempHtml
-  let componentItems = document.getElementsByClassName('component-box')
-  for (let i = 0; i < instanceSetting.shapes.length; i++) {
-    let shapeName = instanceSetting.shapes[i]
-    let shape = new (getShapeByType(shapeName))(componentItems[i], 'process', -1, -1, 30, 30)
-    shape.draw(2, 5)
-  }
+  createComponets(document.getElementById('draw-components'), instanceSetting.shapes)
 
   let canvasBackground = document.getElementById('canvas-background')
   backgroundDraw(canvasBackground)
-
-  //let canvasController = document.getElementById('controls_bounding')
 
   let drawLayout = document.getElementById('draw-layout')
   drawLayout.scrollTop = 1000 - 10

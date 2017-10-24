@@ -1,3 +1,5 @@
+import colors from '../common/colors'
+
 let basic = {
   width: 120,
   height: 90
@@ -39,8 +41,8 @@ function getDefaultSetting (type) {
 }
 
 let drawingDefaultSetting = {
-  fillStyle: '#FFFFFF',
-  strokeStyle: '#000000',
+  fillStyle: colors.white,
+  strokeStyle: colors.black,
   lineWidth: 2,
   lineDash: []
 }
