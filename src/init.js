@@ -47,11 +47,15 @@ function createComponets (el, shapes) {
 }
 
 function init (instanceSetting, shapeList) {
-  instanceSetting.el.classList.add('draw-main')
+  instanceSetting.el.classList.add('fff-draw-main')
 
   createContainer(instanceSetting.el)
 
   createComponets(document.getElementById('draw-components'), instanceSetting.shapes)
+
+  if (instanceSetting.toolbar.el) {
+    getToolbar(instanceSetting.toolbar.el, instanceSetting.toolbar.tools, instanceSetting.toolbar.hint)
+  }
 
   let canvasBackground = document.getElementById('canvas-background')
   backgroundDraw(canvasBackground)

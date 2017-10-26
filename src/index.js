@@ -1,4 +1,5 @@
 import init from './init'
+import _ from './common/util'
 
 (function (window, document) {
   // settings: {
@@ -19,7 +20,8 @@ import init from './init'
         'fontName', 'fontSize', 'fontColor',
         'fillStyle', 'strokeStyle', 'lineWidth', 'lineDash',
         'linkerType', 'arrowType'
-      ]
+      ],
+      hint: true
     }
   }
 
@@ -38,13 +40,14 @@ import init from './init'
   function replaceObjectProps (target, source) {
     let clone = cloneObject(target)
     for (let prop in clone) {
-      if (typeof clone[prop] !== 'object') {
-        clone[prop] = hasProp(source, prop) ? source[prop] : clone[prop]
-      }
-      else {
+      // Note that typeof null === 'object'.
+      if (clone[prop] && typeof clone[prop] === 'object' && !_.isArray(clone[prop])) {
         if (source[prop]) {
           clone[prop] = replaceObjectProps(clone[prop], source[prop])
         }
+      }
+      else {
+        clone[prop] = hasProp(source, prop) ? source[prop] : clone[prop]
       }
     }
     return clone
@@ -58,6 +61,10 @@ import init from './init'
 
     let instanceSetting = replaceObjectProps(defaultInstanceSettings, params)
     instanceSetting.el = el
+
+    if (params.toolbar.el && (el = document.querySelectorAll(params.toolbar.el)[0])) {
+      instanceSetting.toolbar.el = el
+    }
 
     return instanceSetting
   }

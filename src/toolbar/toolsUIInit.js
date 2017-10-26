@@ -1,10 +1,10 @@
 import _ from '../common/util'
-import {tools, toolsGroup, simplyToolTypes, hintData} from './toolbarDefaultSetting'
+import {tools, toolsGroup, simplyToolTypes, hintData, toolFontClass} from './toolbarDefaultSetting'
 
 function getToolHtml (type) {
   if (_.contains(simplyToolTypes, type)) {
     return `<div id="tool_${type}" class="toolbar-button" hint-data="${hintData[type]}">
-      <div class="ico ${type}"></div>
+      <i class="icon fa ${toolFontClass[type]}"></i>
     </div>`
   }
   switch (type) {
@@ -22,9 +22,20 @@ function getToolHtml (type) {
 }
 
 function createTools (el, enabledTools) {
+  el.classList.add('fff-draw-tools')
+
   let html = ''
-  for (let i = 0; i < enabledTools; i++) {
-    html += getToolHtml(enabledTools[i])
+
+  for (let i = 0; i < toolsGroup.length; i++) {
+    let btnsHtml = ''
+    for (let j = 0; j < toolsGroup[i].length; j++) {
+      if (_.contains(enabledTools, toolsGroup[i][j])) {
+        btnsHtml += getToolHtml(toolsGroup[i][j])
+      }
+    }
+    if (btnsHtml !== '') {
+      html += '<div class="btn-group">' + btnsHtml + '</div>'
+    }
   }
   el.innerHTML = html
 }

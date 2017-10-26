@@ -1,36 +1,33 @@
-html, body {
-  margin: 0; }
-
-.draw-main {
+.fff-draw-main {
   width: 100%; }
-  .draw-main #draw-components {
+  .fff-draw-main #draw-components {
     width: 160px;
     position: absolute; }
-    .draw-main #draw-components .component-box {
+    .fff-draw-main #draw-components .component-box {
       cursor: pointer;
       width: 30px;
       height: 30px; }
-  .draw-main #draw-layout {
+  .fff-draw-main #draw-layout {
     background: #b6b6b6;
     margin-left: 160px;
     height: 800px;
     overflow: scroll; }
-    .draw-main #draw-layout #draw-container {
+    .fff-draw-main #draw-layout #draw-container {
       position: relative;
       padding: 1000px;
       width: 3250px;
       height: 3500px;
       overflow: hidden; }
-      .draw-main #draw-layout #draw-container #designer_canvas {
+      .fff-draw-main #draw-layout #draw-container #designer_canvas {
         width: 100%;
         height: 100%;
         position: relative; }
-        .draw-main #draw-layout #draw-container #designer_canvas #canvas-background {
+        .fff-draw-main #draw-layout #draw-container #designer_canvas #canvas-background {
           width: 1250px;
           height: 1500px;
           background: ghostwhite;
           z-index: 0; }
-        .draw-main #draw-layout #draw-container #designer_canvas .shape-box {
+        .fff-draw-main #draw-layout #draw-container #designer_canvas .shape-box {
           z-index: 1;
           cursor: move;
           position: absolute;
@@ -38,10 +35,10 @@ html, body {
           -moz-user-select: none;
           -ms-user-select: none;
           user-select: none; }
-          .draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-canvas {
+          .fff-draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-canvas {
             width: 100%;
             height: 100%; }
-          .draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text {
+          .fff-draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text {
             border: none;
             background: inherit;
             resize: none;
@@ -53,18 +50,18 @@ html, body {
             -moz-transform: translateX(-50%) translateY(-50%);
             -ms-transform: translateX(-50%) translateY(-50%);
             transform: translateX(-50%) translateY(-50%); }
-            .draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text:focus {
+            .fff-draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text:focus {
               outline: -webkit-focus-ring-color auto 5px; }
-        .draw-main #draw-layout #draw-container #designer_canvas .linker_box {
+        .fff-draw-main #draw-layout #draw-container #designer_canvas .linker_box {
           cursor: default;
           z-index: 2; }
-        .draw-main #draw-layout #draw-container #designer_canvas #shape_controls {
+        .fff-draw-main #draw-layout #draw-container #designer_canvas #shape_controls {
           cursor: move;
           height: 70px;
           z-index: 3;
           display: none;
           position: absolute; }
-          .draw-main #draw-layout #draw-container #designer_canvas #shape_controls .shape_controller {
+          .fff-draw-main #draw-layout #draw-container #designer_canvas #shape_controls .shape_controller {
             position: absolute;
             border: 1px solid #883333;
             width: 8px;
@@ -73,4 +70,29 @@ html, body {
             display: block;
             background: white; }
 
-/*# sourceMappingURL=freeFlowChart.cssChart.css.map */
+.fff-draw-tools .btn-group > .toolbar-button:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 1px solid #cccccc; }
+.fff-draw-tools .btn-group > .toolbar-button:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px; }
+.fff-draw-tools .btn-group .toolbar-button {
+  cursor: pointer;
+  padding: 4px 12px;
+  display: inline-block;
+  border-top: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  border-right: 1px solid #cccccc;
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6); }
+  .fff-draw-tools .btn-group .toolbar-button:hover {
+    background: #e6e6e6; }
+  .fff-draw-tools .btn-group .toolbar-button:active {
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05); }
+  .fff-draw-tools .btn-group .toolbar-button .icon {
+    color: #333333;
+    font-size: 16px; }
+
+/*# sourceMappingURL=freeFlowChart.css.map */

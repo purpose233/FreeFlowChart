@@ -12,11 +12,14 @@
   transform: translateX($x) translateY($y);
 }
 
-html, body {
-  margin: 0;
+@mixin transition ($property, $duration) {
+  transition: $property $duration;
+  -moz-transition: $property $duration;
+  -webkit-transition: $property $duration;
+  -o-transition: $property $duration;
 }
 
-.draw-main {
+.fff-draw-main {
   width: 100%;
 
   #draw-components {
@@ -100,6 +103,43 @@ html, body {
             background: white;
           }
         }
+      }
+    }
+  }
+}
+
+.fff-draw-tools {
+  .btn-group > .toolbar-button:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-left: 1px solid rgb(204, 204, 204);
+  }
+  .btn-group > .toolbar-button:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+  .btn-group {
+    .toolbar-button {
+      cursor: pointer;
+      padding: 4px 12px;
+      display: inline-block;
+      border-top: 1px solid rgb(204, 204, 204);
+      border-bottom: 1px solid rgb(204, 204, 204);
+      border-right: 1px solid rgb(204, 204, 204);
+      background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+      &:hover {
+        //@include transition(background-color, 0.3s);
+        background: rgb(230, 230, 230);
+      }
+      &:active {
+        -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+        -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+      }
+
+      .icon {
+        color: rgb(51, 51, 51);
+        font-size: 16px;
       }
     }
   }
