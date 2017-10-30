@@ -123,7 +123,11 @@ let eventCommon = {
     let result, shape
     let position = calcPositionInCanvas(event.pageX, event.pageY)
 
-    if (event.target.classList.contains('shape_controller')) {
+    if (event.target.classList.contains('toolbar-button')
+      || event.target.parentNode.classList && event.target.parentNode.classList.contains('toolbar-button')) {
+      return { shape: null, type: 'tool' }
+    }
+    else if (event.target.classList.contains('shape_controller')) {
       return {
         shape: this.selectedShape,
         type: 'controller'
@@ -173,6 +177,7 @@ let eventCommon = {
     //              shapeBody, shapeLineArea
     //              controller
     //              empty
+    //              tool
   }
 
 }

@@ -1,9 +1,10 @@
-import {getDefaultSetting, drawingDefaultSetting} from './shapeDefaultSetting'
+import {getDefaultSetting, drawingDefaultSetting, textDefaultSetting} from './shapeDefaultSetting'
+import _ from '../common/util'
 
 let shapeId = 0
 
 class Shape {
-  constructor (el, type, left, top, width, height) {
+  constructor (el, type, left, top, width, height, drawStyle, textStyle) {
     this.id = 'shape' + shapeId++
     this.el = el
     this.canvas = el.getElementsByTagName('canvas')[0]
@@ -15,7 +16,8 @@ class Shape {
 
     let temp = getDefaultSetting(this.type)
     this.shapeName = temp.shapeName
-    if (typeof width !== 'undefined') {
+    if (typeof width !== 'undefined' && width !== null
+      && typeof height !== 'undefined' && height !== null) {
       this.width = width
       this.height = height
     }
@@ -24,10 +26,8 @@ class Shape {
       this.height = temp.height
     }
 
-    this.fillStyle = drawingDefaultSetting.fillStyle
-    this.strokeStyle = drawingDefaultSetting.strokeStyle
-    this.lineWidth = drawingDefaultSetting.lineWidth
-    this.lineDash = drawingDefaultSetting.lineDash
+    this.drawStyle = drawStyle ? drawStyle : _.clone(drawingDefaultSetting)
+    this.textStyle = textStyle ? textStyle : _.clone(textDefaultSetting)
 
     this.relativeLines = []
 
@@ -44,6 +44,8 @@ class Shape {
     this.canvas.height = this.height
     //this.context.lineCap = 'round'
     //this.context.lineJoin = 'round'
+
+    this.setTextareaStyle()
   }
   append () {
     let parent = document.getElementById('designer_canvas')
@@ -68,11 +70,12 @@ class Shape {
     this.el.style.height = this.canvas.style.height = height + 'px'
   }
   resetDrawStyle () {
-    this.context.fillStyle = this.fillStyle
-    this.context.strokeStyle = this.strokeStyle
-    this.context.lineWidth = this.lineWidth
-    this.context.setLineDash(this.lineDash)
+    this.context.fillStyle = this.drawStyle.fillStyle
+    this.context.strokeStyle = this.drawStyle.strokeStyle
+    this.context.lineWidth = this.drawStyle.lineWidth
+    this.context.setLineDash(this.drawStyle.lineDash)
   }
+  /*
   setFillStyle (fillStyle) {
     this.fillStyle = fillStyle
     this.resetDrawStyle()
@@ -84,7 +87,7 @@ class Shape {
   setLineWidth (lineWidth) {
     this.lineWidth = lineWidth
     this.resetDrawStyle()
-  }
+  }*/
   setLineDash (lineDash) {
     this.lineDash = lineDash
     this.resetDrawStyle()
@@ -121,6 +124,33 @@ class Shape {
         this.relativeLines[i].line.dest.shape = null
       }
     }
+  }
+  setTextareaStyle () {
+    if (!this.shapeText) { return }
+    for (let prop in this.textStyle) {
+      this.shapeText.style[prop] = this.textStyle[prop]
+    }
+  }
+  setTextareaSingleStyle (prop, value) {
+    if (_.containsProp(this.textStyle, prop)) {
+      this.textStyle[prop] = value
+      this.shapeText.style[prop] = value
+    }
+  }
+  getTextareaStyle () {
+
+  }
+  getToolbarState () {
+    let state = {}
+    for (let prop in this.textStyle) {
+      if (this.textStyle[prop] === textDefaultSetting[prop]) {
+        state[prop] = 'inactive'
+      }
+      else {
+        state[prop] = 'active'
+      }
+    }
+    return state
   }
 }
 

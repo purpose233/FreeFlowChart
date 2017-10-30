@@ -47,4 +47,13 @@ let drawingDefaultSetting = {
   lineDash: []
 }
 
-export {getDefaultSetting, drawingDefaultSetting}
+let textDefaultSetting = {
+  fontWeight: 'normal',
+  fontStyle: 'normal',
+  textDecoration: 'none',
+  fontFamily: 'Arial',
+  fontSize: '13px',
+  color: 'rgb(50, 50, 50)'
+}
+
+export {getDefaultSetting, drawingDefaultSetting, textDefaultSetting}

@@ -99,5 +99,7 @@
   .fff-draw-tools .btn-group .toolbar-button .icon {
     color: #333333;
     font-size: 16px; }
+.fff-draw-tools .btn-group .toolbar-button .active {
+  background: #e6e6e6; }
 
 /*# sourceMappingURL=freeFlowChart.css.map */

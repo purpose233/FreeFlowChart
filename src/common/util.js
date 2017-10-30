@@ -90,4 +90,33 @@ _.contains = function (list, value) {
   return false
 }
 
+_.containsProp = function (list, prop) {
+  if (!_.isObject(list)) {
+    return false
+  }
+  else {
+    for (let p in list) {
+      if (p === prop) { return true }
+    }
+  }
+  return false
+}
+
+_.clone = function (o) {
+  let clone
+  if (_.isArray(o)) { clone = [] }
+  else if (_.isObject(o)) { clone = {} }
+  else { return o }
+
+  for (let prop in o) {
+    if (_.isObject(o[prop])) {
+      clone[prop] = _.clone(o[prop])
+    }
+    else {
+      clone[prop] = o[prop]
+    }
+  }
+  return clone
+}
+
 export default _

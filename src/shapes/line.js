@@ -52,9 +52,11 @@ class Line {
     this.linkerType = temp.linkerType
     this.arrowType = temp.arrowType
 
-    this.strokeStyle = drawingDefaultSetting.strokeStyle
-    this.lineWidth = drawingDefaultSetting.lineWidth
-    this.lineDash = drawingDefaultSetting.lineDash
+    this.drawStyle = {
+      strokeStyle: drawingDefaultSetting.strokeStyle,
+      lineWidth: drawingDefaultSetting.lineWidth,
+      lineDash: drawingDefaultSetting.lineDash
+    }
 
     this.drawBeginPosition = {}
     this.drawEndPosition = {}
@@ -132,9 +134,9 @@ class Line {
     parent.removeChild(this.el)
   }
   resetDrawStyle () {
-    this.context.strokeStyle = this.strokeStyle
-    this.context.lineWidth = this.lineWidth
-    this.context.setLineDash(this.lineDash)
+    this.context.strokeStyle = this.drawStyle.strokeStyle
+    this.context.lineWidth = this.drawStyle.lineWidth
+    this.context.setLineDash(this.drawStyle.lineDash)
   }
   drawArrow (angle) {
     this.context.translate(this.drawEndPosition.x, this.drawEndPosition.y)

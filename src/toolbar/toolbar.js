@@ -1,5 +1,9 @@
 import createTools from './toolsUIInit'
 
+function getToolType (el) {
+  return el.getAttribute('id').slice(5)
+}
+
 class Toolbar {
   constructor (el, tools, hint) {
     this.el = el
@@ -10,6 +14,10 @@ class Toolbar {
   }
   init () {
     createTools(this.el, this.tools, this.hint)
+    this.toolElements = this.el.getElementsByClassName('toolbar-button')
+  }
+  setToolbarState (state) {
+    //for (let)
   }
 }
 

@@ -3,7 +3,7 @@ import {tools, toolsGroup, simplyToolTypes, hintData, toolFontClass} from './too
 
 function getToolHtml (type) {
   if (_.contains(simplyToolTypes, type)) {
-    return `<div id="tool_${type}" class="toolbar-button" hint-data="${hintData[type]}">
+    return `<div id="tool-${type}" class="toolbar-button" hint-data="${hintData[type]}">
       <i class="icon fa ${toolFontClass[type]}"></i>
     </div>`
   }

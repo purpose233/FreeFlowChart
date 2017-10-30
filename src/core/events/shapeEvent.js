@@ -169,6 +169,7 @@ function shapeEventOnMouseDown (event, shapeList) {
       resizeData.originLeft = eventCommon.selectedShape.left
       resizeData.originTop = eventCommon.selectedShape.top
       break;
+    case 'tool': break;
     case 'empty':
     default:
       if (eventCommon.lineData.selectedLine) {
