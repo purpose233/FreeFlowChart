@@ -1,4 +1,5 @@
 import createTools from './toolsUIInit'
+import _ from '../common/util'
 
 function getToolType (el) {
   return el.getAttribute('id').slice(5)
@@ -17,7 +18,18 @@ class Toolbar {
     this.toolElements = this.el.getElementsByClassName('toolbar-button')
   }
   setToolbarState (state) {
-    //for (let)
+    let type
+    for (let i = 0; i < this.toolElements.length; i++) {
+      type = getToolType(this.toolElements[i])
+      if (_.contains(state, type)) {
+        if (state[type] === 'active') {
+          this.toolElements.classList.add('active')
+        }
+      }
+      else {
+        this.toolElements.setAttribute('disabled', 'disabled')
+      }
+    }
   }
 }
 

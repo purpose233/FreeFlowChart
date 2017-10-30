@@ -52,7 +52,7 @@ let textDefaultSetting = {
   fontStyle: 'normal',
   textDecoration: 'none',
   fontFamily: 'Arial',
-  fontSize: '13px',
+  fontSize: 'x-normal',
   color: 'rgb(50, 50, 50)'
 }
 

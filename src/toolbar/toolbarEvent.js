@@ -2,8 +2,8 @@ import {tools} from './toolbarDefaultSetting'
 import eventCommon from '../core/events/common'
 import _ from '../common/util'
 
-function getToolElement () {
-
+function getToolElement (type) {
+  return document.getElementById('tool-' + type)
 }
 
 function judgeToolType (event) {
@@ -20,6 +20,8 @@ function judgeToolType (event) {
 
 function toolbarEventOnMouseDown (event, shapeList) {
   let type = judgeToolType(event)
+  let toolElement = getToolElement(type)
+  let value
   switch (type) {
     case 'undo':
       document.execCommand('undo')
@@ -28,6 +30,14 @@ function toolbarEventOnMouseDown (event, shapeList) {
       document.execCommand('redo')
       break;
     case 'bold':
+      if (toolElement.getAttribute('disabled') === 'disabled') { break }
+      if (toolElement.classList.contains('active')) {
+        value = 'bold'
+
+      }
+      else {
+        value = 'normal'
+      }
       eventCommon.selectedShape.setTextareaSingleStyle('fontWeight', 'bold')
       break;
     case 'italic':

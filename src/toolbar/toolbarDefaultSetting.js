@@ -1,6 +1,6 @@
 const tools = ['undo', 'redo',
   'bold', 'italic', 'underline',
-  'fontName', 'fontSize', 'fontColor',
+  'fontFamily', 'fontSize', 'fontColor',
   'fillStyle', 'strokeStyle', 'lineWidth', 'lineDash',
   'linkerType', 'arrowType'
 ]
@@ -8,7 +8,7 @@ const tools = ['undo', 'redo',
 const toolsGroup = [
   ['undo', 'redo'],
   ['bold', 'italic', 'underline'],
-  ['fontName', 'fontSize', 'fontColor'],
+  ['fontFamily', 'fontSize', 'fontColor'],
   ['fillStyle', 'strokeStyle', 'lineWidth', 'lineDash'],
   ['linkerType', 'arrowType']
 ]
@@ -21,7 +21,7 @@ const simplyToolTypes = [
 const hintData = {
   'undo' : '撤销', 'redo': '重做',
   'bold' : '加粗', 'italic' : '斜体', 'underline' : '下划线',
-  'fontName' : '字体', 'fontSize' : '文字大小', 'fontColor' : '文字颜色',
+  'fontFamily' : '字体', 'fontSize' : '文字大小', 'fontColor' : '文字颜色',
   'fillStyle' : '填充颜色', 'strokeStyle' : '线条颜色', 'lineWidth' : '线条宽度', 'lineDash' : '线条样式',
   'linkerType' : '连线类型', 'arrowType' : '箭头类型'
 }
@@ -29,9 +29,28 @@ const hintData = {
 const toolFontClass = {
   'undo' : 'fa-undo', 'redo': 'fa-repeat',
   'bold' : 'fa-bold', 'italic' : 'fa-italic', 'underline' : 'fa-underline',
-  'fontName' : '字体', 'fontSize' : '文字大小', 'fontColor' : '文字颜色',
+  'fontFamily' : '字体', 'fontSize' : '文字大小', 'fontColor' : '文字颜色',
   'fillStyle' : '填充颜色', 'strokeStyle' : '线条颜色', 'lineWidth' : '线条宽度', 'lineDash' : '线条样式',
   'linkerType' : '连线类型', 'arrowType' : '箭头类型'
+}
+
+const typeToStyle = {
+
+}
+
+const toolStyleValue = {
+  'bold' : ['normal', 'bold'],
+  'italic' : ['normal', 'italic'],
+  'underline' : ['none', 'underline'],
+  'fontFamily' : [],
+  'fontSize' : ['x-small', 'x-normal', 'x-large'],
+  'fontColor' : '文字颜色',
+  'fillStyle' : '填充颜色',
+  'strokeStyle' : '线条颜色',
+  'lineWidth' : '线条宽度',
+  'lineDash' : '线条样式',
+  'linkerType' : '连线类型',
+  'arrowType' : '箭头类型'
 }
 
 export {tools, toolsGroup, simplyToolTypes, hintData, toolFontClass}
