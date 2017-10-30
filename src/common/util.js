@@ -90,10 +90,4 @@ _.contains = function (list, value) {
   return false
 }
 
-_.parseDom = function (html) {
-  let el = document.createElement("div");
-  el.innerHTML = html
-  return el.childNodes;
-};
-
 export default _

@@ -1,5 +1,9 @@
 .fff-draw-main {
-  width: 100%; }
+  width: 100%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
   .fff-draw-main #draw-components {
     width: 160px;
     position: absolute; }
@@ -39,6 +43,7 @@
             width: 100%;
             height: 100%; }
           .fff-draw-main #draw-layout #draw-container #designer_canvas .shape-box .shape-text {
+            cursor: move;
             border: none;
             background: inherit;
             resize: none;

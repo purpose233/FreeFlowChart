@@ -64,6 +64,10 @@ import _ from './common/util'
 
     if (params.toolbar.el && (el = document.querySelectorAll(params.toolbar.el)[0])) {
       instanceSetting.toolbar.el = el
+      let tools = instanceSetting.toolbar.tools
+      for (let i = 0; i < tools.length; i++) {
+        tools[i] = tools[i].toLowerCase().trim()
+      }
     }
 
     return instanceSetting

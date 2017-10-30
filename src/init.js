@@ -46,14 +46,25 @@ function createComponets (el, shapes) {
   }
 }
 
+function curryEventHandlers (eventType, shapeList, isToolbarEnabled) {
+  let handlers = getEventHandlers(eventType, isToolbarEnabled)
+  return function () {
+    for (let j = 0; j < handlers.length; j++) {
+      handlers[j].call(this, event, shapeList)
+    }
+  }
+}
+
 function init (instanceSetting, shapeList) {
+  let isToolbarEnabled = !!instanceSetting.toolbar.el
+
   instanceSetting.el.classList.add('fff-draw-main')
 
   createContainer(instanceSetting.el)
 
   createComponets(document.getElementById('draw-components'), instanceSetting.shapes)
 
-  if (instanceSetting.toolbar.el) {
+  if (isToolbarEnabled) {
     getToolbar(instanceSetting.toolbar.el, instanceSetting.toolbar.tools, instanceSetting.toolbar.hint)
   }
 
@@ -64,16 +75,8 @@ function init (instanceSetting, shapeList) {
   drawLayout.scrollTop = 1000 - 10
   drawLayout.scrollLeft = 1000 - 10
 
-  function curryEventHandlers (eventType) {
-    let handlers = getEventHandlers(eventType)
-    return function () {
-      for (let j = 0; j < handlers.length; j++) {
-        handlers[j].call(this, event, shapeList)
-      }
-    }
-  }
   for (let i = 0; i < eventList.length; i++) {
-    let func = curryEventHandlers(eventList[i])
+    let func = curryEventHandlers(eventList[i], shapeList, isToolbarEnabled)
     window.addEventListener(eventList[i], func)
   }
 }
