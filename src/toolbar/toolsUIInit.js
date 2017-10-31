@@ -1,10 +1,13 @@
 import _ from '../common/util'
-import {tools, toolsGroup, simplyToolTypes, hintData, toolFontClass} from './toolbarDefaultSetting'
+import {tools, toolsGroup, simplyToolTypes} from './toolbarDefaultSetting'
 
 function getToolHtml (type) {
   if (_.contains(simplyToolTypes, type)) {
-    return `<div id="tool-${type}" class="toolbar-button" hint-data="${hintData[type]}">
-      <i class="icon fa ${toolFontClass[type]}"></i>
+    return`<div id="tool-${type}" 
+      class="toolbar-button" 
+      hint-data="${tools[type].hint}"
+      disabled="${type !== 'undo' && type !== 'redo' ? 'disabled' : ''}">
+      <i class="icon fa ${tools[type].faClass}"></i>
     </div>`
   }
   switch (type) {

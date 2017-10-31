@@ -1,8 +1,20 @@
 import createTools from './toolsUIInit'
 import _ from '../common/util'
+import {tools, simplyToolTypes} from "./toolbarDefaultSetting";
 
 function getToolType (el) {
   return el.getAttribute('id').slice(5)
+}
+
+function styleToState (style) {
+  let state = {}
+
+  for (let value in style) {
+    for (let prop in tools) {
+      if (tools[prop].styleName === value) { state[prop] = style[value] }
+    }
+  }
+  return state
 }
 
 class Toolbar {
@@ -17,17 +29,32 @@ class Toolbar {
     createTools(this.el, this.tools, this.hint)
     this.toolElements = this.el.getElementsByClassName('toolbar-button')
   }
-  setToolbarState (state) {
+  setToolbarState (style) {
     let type
+    let state = styleToState(style)
+
     for (let i = 0; i < this.toolElements.length; i++) {
       type = getToolType(this.toolElements[i])
-      if (_.contains(state, type)) {
-        if (state[type] === 'active') {
-          this.toolElements.classList.add('active')
+      if (type === 'undo' || type === 'redo') { continue }
+      if (_.contains(_.properties(state), type)) {
+        if (_.contains(simplyToolTypes, type)) {
+          this.toolElements[i].setAttribute('disabled', '')
+          if (state[type] !== tools[type].styleValue[0]) {
+            this.toolElements[i].classList.add('active')
+          }
         }
       }
       else {
-        this.toolElements.setAttribute('disabled', 'disabled')
+        this.toolElements[i].setAttribute('disabled', 'disabled')
+      }
+    }
+  }
+  setEmptyToolbarState () {
+    let type
+    for (let i = 0; i < this.toolElements.length; i++) {
+      type = getToolType(this.toolElements[i])
+      if (type !== 'undo' && type !== 'redo') {
+        this.toolElements[i].setAttribute('disabled', 'disabled')
       }
     }
   }
@@ -40,7 +67,7 @@ function getToolbar (el, tools, hint) {
     return toolbar
   }
   else {
-    return new Toolbar(el, tools, hint)
+    return (toolbar = new Toolbar(el, tools, hint))
   }
 }
 

@@ -119,4 +119,13 @@ _.clone = function (o) {
   return clone
 }
 
+_.properties = function (o) {
+  if (!_.isObject(o)) { return null }
+  let props = []
+  for (let prop in o) {
+    props.push(prop)
+  }
+  return props
+}
+
 export default _

@@ -154,8 +154,9 @@ function shapeEventOnMouseDown (event, shapeList) {
       }
       eventCommon.lineData.isActive = true
       eventCommon.lineData.type = 'new'
+      eventCommon.lineData.needDeleted = true
 
-      if (eventCommon.lineData.selectedLine) {
+       if (eventCommon.lineData.selectedLine) {
         eventCommon.lineData.selectedLine.draw()
         eventCommon.lineData.selectedLine = null
       }
@@ -199,6 +200,7 @@ function shapeEventOnMouseMove (event, shapeList) {
       eventCommon.lineData.activeLine.append()
     }
     else {
+      eventCommon.lineData.needDeleted = false
       let position = calcPositionInCanvas(event.pageX, event.pageY)
       let judgeResult = eventCommon.judgeEventAt(event, shapeList)
       if (!judgeResult) {
@@ -207,7 +209,6 @@ function shapeEventOnMouseMove (event, shapeList) {
       }
 
       let shape = judgeResult.shape
-      eventCommon.lineData.needDeleted = false
       switch (judgeResult.type) {
         case 'shapeBody':
         case 'shapeLineArea':

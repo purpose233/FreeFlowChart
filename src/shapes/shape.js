@@ -140,17 +140,11 @@ class Shape {
   getTextareaStyle () {
 
   }
-  getToolbarState () {
-    let state = {}
-    for (let prop in this.textStyle) {
-      if (this.textStyle[prop] === textDefaultSetting[prop]) {
-        state[prop] = 'inactive'
-      }
-      else {
-        state[prop] = 'active'
-      }
-    }
-    return state
+  getAllStyle () {
+    let style = {}
+    for (let prop in this.textStyle) { style[prop] = this.textStyle[prop] }
+    for (let prop in this.drawStyle) { style[prop] = this.drawStyle[prop] }
+    return style
   }
 }
 

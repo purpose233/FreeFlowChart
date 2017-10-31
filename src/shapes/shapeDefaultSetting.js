@@ -41,8 +41,8 @@ function getDefaultSetting (type) {
 }
 
 let drawingDefaultSetting = {
-  fillStyle: colors.white,
-  strokeStyle: colors.black,
+  fillStyle: colors.defaultFillStyle,
+  strokeStyle: colors.defaultStrokeStyle,
   lineWidth: 2,
   lineDash: []
 }
@@ -53,7 +53,7 @@ let textDefaultSetting = {
   textDecoration: 'none',
   fontFamily: 'Arial',
   fontSize: 'x-normal',
-  color: 'rgb(50, 50, 50)'
+  color: colors.textDefaultColor
 }
 
 export {getDefaultSetting, drawingDefaultSetting, textDefaultSetting}
