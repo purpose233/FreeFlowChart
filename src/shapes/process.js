@@ -5,6 +5,8 @@ class Process extends Shape {
     super(el, type, left, top, width, height)
   }
   draw (paddingHorizontal, paddingVertical) {
+    // Note that only the padding of the component is not 10px.
+    // All shapes' padding is 10px.
     let horizontal = typeof paddingHorizontal === 'undefined' ? 10 : paddingHorizontal
     let vertical = typeof paddingVertical === 'undefined' ? 10 : paddingVertical
 
@@ -15,8 +17,8 @@ class Process extends Shape {
     this.context.stroke()
   }
   isPositionInShape (x, y) {
-    return (x >= this.left + 10 && x <= this.left + this.width - 10
-      && y >= this.top + 10 && y <= this.top + this.height - 10)
+    return (x > this.left + 10 && x < this.left + this.width - 10
+      && y > this.top + 10 && y < this.top + this.height - 10)
   }
   isPositionInLineArea (x, y) {
     if (this.isPositionInShape(x, y)) {
@@ -39,22 +41,23 @@ class Process extends Shape {
   // Note that the referPercent is based on inner width of the shape.
   calcLinePosition (referPosition, referPercent) {
     let x, y
+    let points = this.calcShapePoints()
     switch (referPosition) {
       case 'nwCorner':
-        x = this.left + 10
-        y = this.top + 10
+        x = points[0]
+        y = points[1]
         break
       case 'neCorner':
-        x = this.left + this.width - 10
-        y = this.top + 10
+        x = points[2]
+        y = points[3]
         break
       case 'seCorner':
-        x = this.left + this.width - 10
-        y = this.top + this.height - 10
+        x = points[4]
+        y = points[5]
         break
       case 'swCorner':
-        x = this.left + 10
-        y = this.top + this.height - 10
+        x = points[6]
+        y = points[7]
         break
       case 'up':
         x = this.left + 10 + referPercent * (this.width - 20)
@@ -76,6 +79,7 @@ class Process extends Shape {
     return { x: x, y: y }
   }
   calcShapePoints () {
+    // Points: nw -> ne -> se -> sw
     let x1 = this.left + 10, y1 = this.top + 10
     let x2 = this.left + this.width - 10, y2 = this.top + 10
     let x3 = this.left + this.width - 10, y3 = this.top + this.height - 10

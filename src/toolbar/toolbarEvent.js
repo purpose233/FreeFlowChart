@@ -9,7 +9,7 @@ function getToolElement (type) {
 
 function judgeToolType (event) {
   let el = event.target
-  let type = el && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
+  let type = el.getAttribute && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
   if (!type) {
     el = el.parentNode
     type = el && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null

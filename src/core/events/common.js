@@ -141,6 +141,9 @@ let eventCommon = {
       if (result) {
         result.topElement = this.shapeController.el
       }
+      else {
+        result = { topElement: this.shapeController.el }
+      }
       return result
     }
     else if (event.target.parentNode.classList

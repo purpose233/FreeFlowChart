@@ -19,4 +19,13 @@ function calcPointToLineFoot (point, line) {
   }
 }
 
-export {calcPositionInCanvas, calcPointToLineFoot}
+function calcPointOnLine (pointA, pointB, percent) {
+  let [x1, y1] = generalizePoint(pointA)
+  let [x2, y2] = generalizePoint(pointB)
+  return {
+    x: x1 + (x2 - x1) * percent,
+    y: y1 + (y2 - y1) * percent
+  }
+}
+
+export {calcPositionInCanvas, calcPointToLineFoot, calcPointOnLine}

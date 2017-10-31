@@ -2,11 +2,11 @@ import getShapeByType from '../shapes/index'
 
 function createNewShape (type, left, top, width, height) {
   let component = document.createElement('div')
-  component.classList.add('shape-box')
+  component.classList.add('shape-box', type)
 
   component.innerHTML = `
     <canvas class="shape-canvas"></canvas>
-    <textarea class="shape-text" contenteditable="true"></textarea>`
+    <textarea class="shape-text"></textarea>`
 
   let shape = new (getShapeByType(type))(component, type, left, top, width, height)
 

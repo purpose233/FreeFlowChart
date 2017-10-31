@@ -72,6 +72,8 @@
             height: 100%;
           }
           .shape-text {
+            text-align: center;
+            overflow: hidden;
             cursor: move;
             border: none;
             background: inherit;
@@ -85,6 +87,9 @@
               outline: -webkit-focus-ring-color auto 5px;
             }
           }
+        }
+        .decision .shape-text {
+          max-width: calc(50% - 10px);
         }
         .linker_box {
           cursor: default;
@@ -124,6 +129,8 @@
     border-bottom-right-radius: 5px;
   }
   .btn-group {
+    display: inline-block;
+    margin: 10px;
     .toolbar-button {
       cursor: pointer;
       padding: 4px 12px;

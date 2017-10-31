@@ -198,6 +198,7 @@ function shapeEventOnMouseMove (event, shapeList) {
       eventCommon.lineData.activeLine = createNewLine(src, dest)
       eventCommon.lineData.activeLine.draw()
       eventCommon.lineData.activeLine.append()
+      eventCommon.lineData.activeLine.el.style.cursor = 'move'
     }
     else {
       eventCommon.lineData.needDeleted = false
