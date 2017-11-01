@@ -70,6 +70,9 @@ class Shape {
     this.el.style.height = this.canvas.style.height = height + 'px'
   }
   resetDrawStyle () {
+    this.context.lineCap = 'round'
+    this.context.lineJoin = 'round'
+
     this.context.fillStyle = this.drawStyle.fillStyle
     this.context.strokeStyle = this.drawStyle.strokeStyle
     this.context.lineWidth = this.drawStyle.lineWidth

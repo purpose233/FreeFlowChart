@@ -13,4 +13,3 @@ module.exports = {
     port:8080
   }
 }
-//webpack-dev-server --inline --hot --quiet
