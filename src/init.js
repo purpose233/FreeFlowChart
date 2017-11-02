@@ -10,14 +10,18 @@ const drawContainerHtml = `<div class="draw-main">
         <div id="draw-container" style="padding:1000px;">
             <div id="designer_canvas">
                 <canvas id="canvas-background"></canvas>
-                <div id="shape_controls">
-                    <canvas id="controls_bounding" width="120" height="90"></canvas>
-                    <div class="shape_controller n w" resizedir="nw" style="cursor:nw-resize; left:6px; top:6px;"></div>
-                    <div class="shape_controller n e" resizedir="ne" style="cursor:ne-resize; left:calc(100% - 14px); top:6px;"></div>
-                    <div class="shape_controller s e" resizedir="se" style="cursor:se-resize; left:calc(100% - 14px); top:calc(100% - 14px);"></div>
-                    <div class="shape_controller s w" resizedir="sw" style="cursor:sw-resize; left:6px; top:calc(100% - 14px);"></div>
+                <div id="shape-controls">
+                    <canvas id="controls-bounding" width="120" height="90"></canvas>
+                    <div class="shape-controller n w" resizedir="nw" style="cursor:nw-resize; left:5px; top:5px;"></div>
+                    <div class="shape-controller n e" resizedir="ne" style="cursor:ne-resize; right:5px; top:5px;"></div>
+                    <div class="shape-controller s e" resizedir="se" style="cursor:se-resize; right:5px; bottom:5px;"></div>
+                    <div class="shape-controller s w" resizedir="sw" style="cursor:sw-resize; left:5px; bottom:5px;"></div>
+                    <div class="shape-anchor" style="left:calc(50% - 4px); top:6px;"></div>
+                    <div class="shape-anchor" style="right:6px; top:calc(50% - 4px);"></div>
+                    <div class="shape-anchor" style="left:calc(50% - 4px); bottom:6px;"></div>
+                    <div class="shape-anchor" style="left:6px; top:calc(50% - 4px);"></div>
                 </div>
-                <div id="bezier_controls">
+                <div id="bezier-controls">
                 </div>
             </div>
         </div>

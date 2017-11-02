@@ -45,18 +45,24 @@ function calcPointToEllipseClosestPoint (point, ellipse) {
   if (!!m) { x0 -= m }
   if (!!n) { y0 -= n }
 
+  // Note that c presents c * c.
   let c = a*a - b*b
+
   let A = c*c
-  let B = 2*x0*a*a*c
-  let C = Math.pow(y0*a*b,2)+Math.pow(x0*a*a,2)-Math.pow(a*c,2)
-  let D = 2*x0*Math.pow(a,4)*c
-  let E = -Math.pow(a,6)*x0*x0
+  let B = -2*x0*a*a*c
+  let C = (y0*a*b)*(y0*a*b)+x0*x0*a*a*a*a-a*a*c*c
+  let D = 2*x0*a*a*a*a*c
+  let E = -a*a*a*a*a*a*x0*x0
+
+  if (A !== 0) {
+    B /= A, C /= A, D /= A, E /= A, A = 1
+  }
 
   let result = calcQuarticEquation(A, B, C, D, E)
   let possiblePoint = []
   if (result.length > 0) {
     for (let i = 0; i < result.length; i++) {
-      let ys = calcYofEllipse(result[i])
+      let ys = calcYofEllipse(result[i], [a, b, 0, 0])
       if (ys) {
         possiblePoint.push({x:result[i], y:ys[0]})
         possiblePoint.push({x:result[i], y:ys[1]})
@@ -72,10 +78,12 @@ function calcPointToEllipseClosestPoint (point, ellipse) {
       shortestDistance = tempDistance
     }
   }
-  return {
+  // Only the point returned is the real point,
+  // all others are points after moved.
+  return bestPoint ? {
     x: bestPoint.x + m,
     y: bestPoint.y + n
-  }
+  } : null
 }
 
-export {calcPositionInCanvas, calcPointToLineFoot, calcPointOnLine}
+export {calcPositionInCanvas, calcPointToLineFoot, calcPointOnLine, calcPointToEllipseClosestPoint}

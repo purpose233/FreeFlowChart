@@ -56,4 +56,6 @@ let textDefaultSetting = {
   color: colors.textDefaultColor
 }
 
-export {getDefaultSetting, drawingDefaultSetting, textDefaultSetting}
+let defaultPadding = 10
+
+export {getDefaultSetting, drawingDefaultSetting, textDefaultSetting, defaultPadding}

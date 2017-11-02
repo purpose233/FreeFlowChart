@@ -61,20 +61,29 @@
               outline: -webkit-focus-ring-color auto 5px; }
         .fff-draw-main #draw-layout #draw-container #designer_canvas .decision .shape-text {
           max-width: calc(50% - 10px); }
-        .fff-draw-main #draw-layout #draw-container #designer_canvas .linker_box {
+        .fff-draw-main #draw-layout #draw-container #designer_canvas .linker-box {
           cursor: default;
           z-index: 2; }
-        .fff-draw-main #draw-layout #draw-container #designer_canvas #shape_controls {
+        .fff-draw-main #draw-layout #draw-container #designer_canvas #shape-controls {
           cursor: move;
           height: 70px;
           z-index: 3;
           display: none;
           position: absolute; }
-          .fff-draw-main #draw-layout #draw-container #designer_canvas #shape_controls .shape_controller {
+          .fff-draw-main #draw-layout #draw-container #designer_canvas #shape-controls .shape-controller {
             position: absolute;
             border: 1px solid #883333;
             width: 8px;
             height: 8px;
+            z-index: 1;
+            display: block;
+            background: white; }
+          .fff-draw-main #draw-layout #draw-container #designer_canvas #shape-controls .shape-anchor {
+            position: absolute;
+            border: 1px solid #883333;
+            border-radius: 4px;
+            width: 6px;
+            height: 6px;
             z-index: 1;
             display: block;
             background: white; }

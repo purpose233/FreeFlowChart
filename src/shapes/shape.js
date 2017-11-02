@@ -1,4 +1,4 @@
-import {getDefaultSetting, drawingDefaultSetting, textDefaultSetting} from './shapeDefaultSetting'
+import {getDefaultSetting, drawingDefaultSetting, textDefaultSetting, defaultPadding} from './shapeDefaultSetting'
 import _ from '../common/util'
 
 let shapeId = 0
@@ -28,6 +28,7 @@ class Shape {
 
     this.drawStyle = drawStyle ? drawStyle : _.clone(drawingDefaultSetting)
     this.textStyle = textStyle ? textStyle : _.clone(textDefaultSetting)
+    this.padding = defaultPadding
 
     this.relativeLines = []
 

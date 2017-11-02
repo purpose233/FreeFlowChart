@@ -43,24 +43,24 @@ function generalizeEllipse (ellipse) {
 function calcQuarticEquation (a, b, c, d, e) {
   let result = []
   let t1 = c*c-3*b*d+12*a*e
-  let t2 = 2*c*c*c-9*b*c*d+27*a*d*d-72*a*c*e
+  let t2 = 2*c*c*c-9*b*c*d+27*a*d*d+27*b*b*e-72*a*c*e
 
   let temp = Math.pow(t2+Math.sqrt(-4*t1*t1*t1+t2*t2),1/3)
   let P = Math.pow(2,1/3)*t1/(3*a*temp)+temp/(3*Math.pow(2,1/3)*a)
 
-  let Q = -b/(4*a)-0.5*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P)
+  let Q = 0.5*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P)
   if (isNaN(Q)) { return [] }
   let R = b*b/(2*a*a)-4*c/(3*a)-P
-  let S = -(b*b*b/(a*a*a)+4*b*c/(a*a)-8*d/a)/(4*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P))
+  let S = (-b*b*b/(a*a*a)+4*b*c/(a*a)-8*d/a)/(4*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P))
   let T1 = 0.5*Math.sqrt(R-S)
   let T2 = 0.5*Math.sqrt(R+S)
   if (!isNaN(T1)) {
-    result.push(R - T1)
-    result.push(R + T1)
+    result.push(-b/(4*a)-Q-T1)
+    result.push(-b/(4*a)-Q+T1)
   }
   if (!isNaN(T2)) {
-    result.push(R - T2)
-    result.push(R + T2)
+    result.push(-b/(4*a)+Q-T2)
+    result.push(-b/(4*a)+Q+T2)
   }
   return result
 }

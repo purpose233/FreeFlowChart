@@ -16,7 +16,7 @@ function createNewShape (type, left, top, width, height) {
 
 function createNewLine (src, dist, settings) {
   let component = document.createElement('div')
-  component.classList.add('shape-box', 'linker_box')
+  component.classList.add('shape-box', 'linker-box')
 
   component.innerHTML = `
     <canvas class="shape-canvas"></canvas>

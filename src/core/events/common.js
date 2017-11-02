@@ -6,8 +6,8 @@ let eventCommon = {
     el: null,
     canvas: null,
     init: function () {
-      this.el = document.getElementById('shape_controls')
-      this.canvas = document.getElementById('controls_bounding')
+      this.el = document.getElementById('shape-controls')
+      this.canvas = document.getElementById('controls-bounding')
     },
     reset: function (left, top, width, height) {
       if (!this.el) {
@@ -127,14 +127,14 @@ let eventCommon = {
       || event.target.parentNode.classList && event.target.parentNode.classList.contains('toolbar-button')) {
       return { shape: null, type: 'tool' }
     }
-    else if (event.target.classList.contains('shape_controller')) {
+    else if (event.target.classList.contains('shape-controller')) {
       return {
         shape: this.selectedShape,
         type: 'controller'
       }
     }
     else if (event.target.parentNode.getAttribute
-      && event.target.parentNode.getAttribute('id') === 'shape_controls') {
+      && event.target.parentNode.getAttribute('id') === 'shape-controls') {
       // For now, the selected shape has no priority
       // which is the same as processon's work.
       result = this.judgeInShapeList(position, shapeList, -1)
