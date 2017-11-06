@@ -12,12 +12,16 @@ function isPointWithinEllipse (point, ellipse) {
 
 function isInTerminalShape (x, y, left, top, width, height) {
   // Note that the left, right, width, height are about
-  // the rectangle of real terminal. Padding is excluded.
-  if (x > left && x < left + width && y > top && y< top + height) {
+  // the circumscribed rectangle of real terminal. Padding is excluded.
+  let a = height / 2 * arcWidthHeightRatio, b = height / 2
+  let innerLeft = left + a, innerTop = top
+  let innerWidth = width - 2 * a, innerHeight = height
+  if (x > innerLeft && x < innerLeft + innerWidth
+    && y > innerTop && y < innerTop + innerHeight) {
     return true
   }
-  let ellipseLeft = [height/2*arcWidthHeightRatio, height/2, left, top+height/2]
-  let ellipseRight = [height/2*arcWidthHeightRatio, height/2, left+width, top+height/2]
+  let ellipseLeft = [a, b, innerLeft, innerTop + innerHeight / 2]
+  let ellipseRight = [a, b, innerLeft + innerWidth, innerTop + innerHeight / 2]
 
   return (isPointWithinEllipse([x, y], ellipseLeft)
     || isPointWithinEllipse([x, y], ellipseRight))
@@ -28,8 +32,8 @@ class Terminator extends Shape {
     super(el, type, left, top, width, height)
   }
   draw (paddingHorizontal, paddingVertical) {
-    let horizontal = typeof paddingHorizontal === 'undefined' ? 10 : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? 10 : paddingVertical
+    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
+    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
 
     let radius = (this.height - 2 * vertical) / 2
     let centerA = [], centerB = []
@@ -53,14 +57,14 @@ class Terminator extends Shape {
     this.context.stroke()
   }
   isPositionInShape (x, y) {
-    return isInTerminalShape(x, y, this.left + 10, this.top + 10
-      , this.width - 20, this.height - 20)
+    return isInTerminalShape(x, y, this.left + this.padding, this.top + this.padding
+      , this.width - 2 * this.padding, this.height - 2 * this.padding)
   }
   isPositionInLineArea (x, y, bodyExcluded) {
     if (!bodyExcluded && this.isPositionInShape(x, y)) { return false }
 
-    return isInTerminalShape(x, y, this.left + 10, this.top
-      , this.width - 20, this.height)
+    //return isInTerminalShape(x, y, this.left + 10 - 20 * arcWidthHeightRatio, this.top
+    //  , this.width - 20 + 20 * arcWidthHeightRatio * 2, this.height)
   }
   judgeInShape (x, y) {
     let type
@@ -69,8 +73,7 @@ class Terminator extends Shape {
     return { shape: this, type: type }
   }
   calcRectangleData () {
-    let b = (this.height - 20) / 2
-
+    //let b = (this.height - 20) / 2
   }
   // ReferPosition includes top, right, bottom, left, topBorder, neBorder, seBorder, swBorder.
   calcLinePosition (referPosition, referPercent) {

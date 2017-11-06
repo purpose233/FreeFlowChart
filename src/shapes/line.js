@@ -2,6 +2,7 @@ import {getDefaultSetting, drawingDefaultSetting} from './shapeDefaultSetting'
 import {calcPointToPointDistance, calcPointToLineDistance} from "../core/calculation/calcDistance";
 import {calcPointToLineFoot} from "../core/calculation/calcPosition";
 import colors from '../common/colors'
+import {defaultPadding} from "./shapeDefaultSetting"
 
 let lineId = 0
 const lineAreaWidth = 7
@@ -45,6 +46,8 @@ class Line {
     this.left = 0
     this.top = 0
 
+    this.padding = defaultPadding
+
     if (settings) {
 
     }
@@ -82,8 +85,8 @@ class Line {
   resetCanvas () {
     switch (this.linkerType) {
       case 'straight':
-        let width = Math.abs(this.src.position.x - this.dest.position.x) + 20
-        let height = Math.abs(this.src.position.y - this.dest.position.y) + 20
+        let width = Math.abs(this.src.position.x - this.dest.position.x) + 2 * this.padding
+        let height = Math.abs(this.src.position.y - this.dest.position.y) + 2 * this.padding
 
         this.canvas.width = this.el.width = this.width = width
         this.el.style.width = this.canvas.style.width = width + 'px'
@@ -92,16 +95,16 @@ class Line {
 
         let x, y
         if ((this.dest.position.x - this.src.position.x) >= 0) {
-          x = this.src.position.x - 10
+          x = this.src.position.x - this.padding
         }
         else {
-          x = this.dest.position.x - 10
+          x = this.dest.position.x - this.padding
         }
         if ((this.dest.position.y - this.src.position.y) >= 0) {
-          y = this.src.position.y - 10
+          y = this.src.position.y - this.padding
         }
         else {
-          y = this.dest.position.y - 10
+          y = this.dest.position.y - this.padding
         }
         this.setPosition(x, y)
         break;
@@ -164,45 +167,45 @@ class Line {
       }
     }
     this.context.beginPath()
-    this.context.arc(position.x, position.y, 10, 0, 2 * Math.PI)
+    this.context.arc(position.x, position.y, this.padding, 0, 2 * Math.PI)
     this.context.fillStyle = colors.lineArrowHightlight
     this.context.fill()
   }
   calcDrawingBeginEndPoints () {
     if ((this.dest.position.x - this.src.position.x) >= 0) {
-      this.drawBeginPosition.x = 10
-      this.drawEndPosition.x = this.width - 10
+      this.drawBeginPosition.x = this.padding
+      this.drawEndPosition.x = this.width - this.padding
     }
     else {
-      this.drawBeginPosition.x = this.width - 10
-      this.drawEndPosition.x = 10
+      this.drawBeginPosition.x = this.width - this.padding
+      this.drawEndPosition.x = this.padding
     }
     if ((this.dest.position.y - this.src.position.y) >= 0) {
-      this.drawBeginPosition.y = 10
-      this.drawEndPosition.y = this.height - 10
+      this.drawBeginPosition.y = this.padding
+      this.drawEndPosition.y = this.height - this.padding
     }
     else {
-      this.drawBeginPosition.y = this.height - 10
-      this.drawEndPosition.y = 10
+      this.drawBeginPosition.y = this.height - this.padding
+      this.drawEndPosition.y = this.padding
     }
   }
   calcJudgingBeginEndPoints () {
     let x1, x2, y1, y2
     if ((this.dest.position.x - this.src.position.x) >= 0) {
-      x1 = this.left + 10
-      x2 = this.left + this.width - 10
+      x1 = this.left + this.padding
+      x2 = this.left + this.width - this.padding
     }
     else {
-      x1 = this.left + this.width - 10
-      x2 = this.left + 10
+      x1 = this.left + this.width - this.padding
+      x2 = this.left + this.padding
     }
     if ((this.dest.position.y - this.src.position.y) >= 0) {
-      y1 = this.top + 10
-      y2 = this.top + this.height - 10
+      y1 = this.top + this.padding
+      y2 = this.top + this.height - this.padding
     }
     else {
-      y1 = this.top + this.height - 10
-      y2 = this.top + 10
+      y1 = this.top + this.height - this.padding
+      y2 = this.top + this.padding
     }
     return [ x1, y1, x2, y2 ]
   }

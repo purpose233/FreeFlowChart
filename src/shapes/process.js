@@ -5,10 +5,9 @@ class Process extends Shape {
     super(el, type, left, top, width, height)
   }
   draw (paddingHorizontal, paddingVertical) {
-    // Note that only the padding of the component is not 10px.
-    // All shapes' padding is 10px.
-    let horizontal = typeof paddingHorizontal === 'undefined' ? 10 : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? 10 : paddingVertical
+    // Note that only the padding of the component is not default.
+    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
+    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
 
     this.resetDrawStyle()
     this.context.fillRect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical)
@@ -17,8 +16,8 @@ class Process extends Shape {
     this.context.stroke()
   }
   isPositionInShape (x, y) {
-    return (x > this.left + 10 && x < this.left + this.width - 10
-      && y > this.top + 10 && y < this.top + this.height - 10)
+    return (x > this.left + this.padding && x < this.left + this.width - this.padding
+      && y > this.top + this.padding && y < this.top + this.height - this.padding)
   }
   isPositionInLineArea (x, y) {
     if (this.isPositionInShape(x, y)) {
@@ -60,30 +59,30 @@ class Process extends Shape {
         y = points[7]
         break
       case 'up':
-        x = this.left + 10 + referPercent * (this.width - 20)
-        y = this.top + 10
+        x = this.left + this.padding + referPercent * (this.width - 2 * this.padding)
+        y = this.top + this.padding
         break
       case 'down':
-        x = this.left + 10 + referPercent * (this.width - 20)
-        y = this.top + this.height - 10
+        x = this.left + this.padding + referPercent * (this.width - 2 * this.padding)
+        y = this.top + this.height - this.padding
         break
       case 'left':
-        x = this.left + 10
-        y = this.top + 10 + referPercent * (this.height - 20)
+        x = this.left + this.padding
+        y = this.top + this.padding + referPercent * (this.height - 2 * this.padding)
         break
       case 'right':
-        x = this.left + this.width - 10
-        y = this.top + 10 + referPercent * (this.height - 20)
+        x = this.left + this.width - this.padding
+        y = this.top + this.padding + referPercent * (this.height - 2 * this.padding)
         break
     }
     return { x: x, y: y }
   }
   calcShapePoints () {
     // Points: nw -> ne -> se -> sw
-    let x1 = this.left + 10, y1 = this.top + 10
-    let x2 = this.left + this.width - 10, y2 = this.top + 10
-    let x3 = this.left + this.width - 10, y3 = this.top + this.height - 10
-    let x4 = this.left + 10, y4 = this.top + this.height - 10
+    let x1 = this.left + this.padding, y1 = this.top + this.padding
+    let x2 = this.left + this.width - this.padding, y2 = this.top + this.padding
+    let x3 = this.left + this.width - this.padding, y3 = this.top + this.height - this.padding
+    let x4 = this.left + this.padding, y4 = this.top + this.height - this.padding
     return [ x1, y1, x2, y2, x3, y3, x4, y4 ]
   }
   getLineReference (x, y) {
@@ -99,7 +98,7 @@ class Process extends Shape {
         }
         else {
           referPosition = 'up'
-          referPercent = (x - x1) / (this.width - 20)
+          referPercent = (x - x1) / (this.width - 2 * this.padding)
         }
       }
       else if (y > y4) {
@@ -111,17 +110,17 @@ class Process extends Shape {
         }
         else {
           referPosition = 'down'
-          referPercent = (x - x4) / (this.width - 20)
+          referPercent = (x - x4) / (this.width - 2 * this.padding)
         }
       }
       else {
         if (x < this.left + this.width / 2) {
           referPosition = 'left'
-          referPercent = (y - this.top - 10) / (this.height - 20)
+          referPercent = (y - this.top - this.padding) / (this.height - 2 * this.padding)
         }
         else {
           referPosition = 'right'
-          referPercent = (y - this.top - 10) / (this.height - 20)
+          referPercent = (y - this.top - this.padding) / (this.height - 2 * this.padding)
         }
       }
     }
@@ -135,10 +134,10 @@ class Process extends Shape {
       //  --
       let lineRefer1 = (x - x3) / (x1 - x3) - (y - y3) / (y1 - y3)
       let lineRefer2 = (x - x4) / (x2 - x4) - (y - y4) / (y2 - y4)
-      //let lineRefer1 = ((x - this.left - this.width + 10) / (20 - this.width)
-      //  - (y - this.top - this.height + 10) / (20 - this.height))
-      //let lineRefer2 = ((x - this.left - this.width + 10) / (20 - this.width)
-      //  - (y - this.top - 10) / (-20 + this.height))
+      //let lineRefer1 = ((x - this.left - this.width + this.padding) / (2 * this.padding - this.width)
+      //  - (y - this.top - this.height + this.padding) / (2 * this.padding - this.height))
+      //let lineRefer2 = ((x - this.left - this.width + this.padding) / (2 * this.padding - this.width)
+      //  - (y - this.top - this.padding) / (-2 * this.padding + this.height))
       if (lineRefer1 <= 0 && lineRefer2 <= 0) {
         referPosition = 'up'
       }

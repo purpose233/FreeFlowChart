@@ -23,8 +23,8 @@ class Decision extends Shape {
     super(el, type, left, top, width, height)
   }
   draw (paddingHorizontal, paddingVertical) {
-    let horizontal = typeof paddingHorizontal === 'undefined' ? 10 : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? 10 : paddingVertical
+    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
+    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
 
     this.resetDrawStyle()
     this.context.beginPath()
@@ -96,10 +96,10 @@ class Decision extends Shape {
   }
   calcShapePoints () {
     // Points: top -> right -> bottom -> left
-    let x1 = this.left + this.width / 2, y1 = this.top + 10
-    let x2 = this.left + this.width - 10, y2 = this.top + this.height / 2
-    let x3 = this.left + this.width / 2, y3 = this.top + this.height - 10
-    let x4 = this.left + 10, y4 = this.top + this.height / 2
+    let x1 = this.left + this.width / 2, y1 = this.top + this.padding
+    let x2 = this.left + this.width - this.padding, y2 = this.top + this.height / 2
+    let x3 = this.left + this.width / 2, y3 = this.top + this.height - this.padding
+    let x4 = this.left + this.padding, y4 = this.top + this.height / 2
     return [ x1, y1, x2, y2, x3, y3, x4, y4 ]
   }
   calcLineAreaPoints () {
