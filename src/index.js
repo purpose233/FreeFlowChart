@@ -12,7 +12,7 @@ import _ from './common/util'
   // }
   const defaultInstanceSettings = {
     el: null,
-    shapes: ['process', 'decision', 'terminator'],
+    shapes: ['process', 'decision', 'terminator', 'storeData'],
     toolbar: {
       el: null,
       tools: ['undo', 'redo',
