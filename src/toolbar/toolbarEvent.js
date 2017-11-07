@@ -12,7 +12,7 @@ function judgeToolType (event) {
   let type = el.getAttribute && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
   if (!type) {
     el = el.parentNode
-    type = el && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
+    type = el.getAttribute && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
   }
 
   if (_.contains(_.properties(tools), type)) { return type }

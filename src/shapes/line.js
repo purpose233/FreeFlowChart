@@ -213,6 +213,7 @@ class Line {
     context.lineTo(-5, 14)
     context.fillStyle = '#000000'
     context.fill()
+    context.rotate(-angle)
     context.translate(-this.drawEndPosition.x, -this.drawEndPosition.y)
   }
   drawReferMark (end, context) {
@@ -257,7 +258,9 @@ class Line {
     let context = (typeof drawContext === 'undefined' || drawContext === null )
       ? this.context : drawContext
 
-    this.clearCanvas()
+    if (context === this.context) {
+      this.clearCanvas()
+    }
     this.resetDrawStyle(context)
     this.calcDrawingBeginEndPoints()
 

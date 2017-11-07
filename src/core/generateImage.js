@@ -30,9 +30,20 @@ function generateImage (shapeList) {
   canvas.height = canvasData.height
   let context = canvas.getContext('2d')
 
-  let shape, left, top
+  // All lines are above other shapes, so lines need to be drawn later.
+  let shape, left, top, lineList = []
   for (let i = 0; i < shapeList.length; i++) {
     shape = shapeList[i]
+    if (shape.type === 'line') {
+      lineList.push(shape)
+      continue
+    }
+    left = shape.left - canvasData.offsetX
+    top = shape.top - canvasData.offsetY
+    shape.drawOnOtherCanvas(context, left, top)
+  }
+  for (let i = 0; i < lineList.length; i++) {
+    shape = lineList[i]
     left = shape.left - canvasData.offsetX
     top = shape.top - canvasData.offsetY
     shape.drawOnOtherCanvas(context, left, top)
