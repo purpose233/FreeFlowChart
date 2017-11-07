@@ -58,9 +58,13 @@ class Terminator extends Shape {
   // draw the ellipse, and it works fine for most time. But when the scale radio
   // is way to big, it will cause the line of ellipse being too thin.
   // Maybe I can try using bezier instead of arc.
-  draw (paddingHorizontal, paddingVertical) {
-    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
+  draw (paddingHorizontal, paddingVertical, drawContext) {
+    let horizontal = (typeof paddingHorizontal === 'undefined' || paddingHorizontal === null)
+      ? this.padding : paddingHorizontal
+    let vertical = (typeof paddingVertical === 'undefined' || paddingVertical === null)
+      ? this.padding : paddingVertical
+    let context = (typeof drawContext === 'undefined' || drawContext === null )
+      ? this.context : drawContext
 
     let radius = (this.height - 2 * vertical) / 2
     let radio = this.calcWidthHeightRatio()
@@ -70,15 +74,21 @@ class Terminator extends Shape {
     centerB.x = (this.width - horizontal) / radio - radius
     centerB.y = vertical + radius
 
-    this.resetDrawStyle()
-    this.context.beginPath()
-    this.context.scale(this.calcWidthHeightRatio(), 1)
-    this.context.arc(centerA.x, centerA.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)
-    this.context.lineTo(centerB.x, vertical)
-    this.context.arc(centerB.x, centerB.y, radius, 1.5 * Math.PI, 0.5 * Math.PI)
-    this.context.closePath()
-    this.context.fill()
-    this.context.stroke()
+    this.resetDrawStyle(context)
+    context.beginPath()
+    context.scale(this.calcWidthHeightRatio(), 1)
+    context.arc(centerA.x, centerA.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)
+    context.lineTo(centerB.x, vertical)
+    context.arc(centerB.x, centerB.y, radius, 1.5 * Math.PI, 0.5 * Math.PI)
+    context.closePath()
+    context.fill()
+    context.stroke()
+    context.scale(1 / this.calcWidthHeightRatio(), 1)
+  }
+  drawOnOtherCanvas (context, left, top) {
+    context.translate(left, top)
+    this.draw(null, null, context)
+    context.translate(-left, -top)
   }
   isPositionInShape (x, y) {
     return isInTerminalShape(x, y, this.left + this.padding, this.top + this.padding

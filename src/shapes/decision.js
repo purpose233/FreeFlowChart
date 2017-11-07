@@ -22,19 +22,28 @@ class Decision extends Shape {
   constructor (el, type, left, top, width, height) {
     super(el, type, left, top, width, height)
   }
-  draw (paddingHorizontal, paddingVertical) {
-    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
+  draw (paddingHorizontal, paddingVertical, drawContext) {
+    let horizontal = (typeof paddingHorizontal === 'undefined' || paddingHorizontal === null)
+      ? this.padding : paddingHorizontal
+    let vertical = (typeof paddingVertical === 'undefined' || paddingVertical === null)
+      ? this.padding : paddingVertical
+    let context = (typeof drawContext === 'undefined' || drawContext === null )
+      ? this.context : drawContext
 
-    this.resetDrawStyle()
-    this.context.beginPath()
-    this.context.moveTo(this.width / 2, vertical)
-    this.context.lineTo(this.width - horizontal, this.height / 2)
-    this.context.lineTo(this.width /2, this.height - vertical)
-    this.context.lineTo(horizontal, this.height / 2)
-    this.context.closePath()
-    this.context.fill()
-    this.context.stroke()
+    this.resetDrawStyle(context)
+    context.beginPath()
+    context.moveTo(this.width / 2, vertical)
+    context.lineTo(this.width - horizontal, this.height / 2)
+    context.lineTo(this.width /2, this.height - vertical)
+    context.lineTo(horizontal, this.height / 2)
+    context.closePath()
+    context.fill()
+    context.stroke()
+  }
+  drawOnOtherCanvas (context, left, top) {
+    context.translate(left, top)
+    this.draw(null, null, context)
+    context.translate(-left, -top)
   }
   isPositionInShape (x, y) {
     let points = this.calcShapePoints()

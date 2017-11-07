@@ -4,16 +4,25 @@ class Process extends Shape {
   constructor (el, type, left, top, width, height) {
     super(el, type, left, top, width, height)
   }
-  draw (paddingHorizontal, paddingVertical) {
+  draw (paddingHorizontal, paddingVertical, drawContext) {
     // Note that only the padding of the component is not default.
-    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
+    let horizontal = (typeof paddingHorizontal === 'undefined' || paddingHorizontal === null)
+      ? this.padding : paddingHorizontal
+    let vertical = (typeof paddingVertical === 'undefined' || paddingVertical === null)
+      ? this.padding : paddingVertical
+    let context = (typeof drawContext === 'undefined' || drawContext === null )
+      ? this.context : drawContext
 
-    this.resetDrawStyle()
-    this.context.fillRect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical)
-    this.context.beginPath()
-    this.context.rect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical);
-    this.context.stroke()
+    this.resetDrawStyle(context)
+    context.fillRect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical)
+    context.beginPath()
+    context.rect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical);
+    context.stroke()
+  }
+  drawOnOtherCanvas (context, left, top) {
+    context.translate(left, top)
+    this.draw(null, null, context)
+    context.translate(-left, -top)
   }
   isPositionInShape (x, y) {
     return (x > this.left + this.padding && x < this.left + this.width - this.padding
@@ -181,6 +190,6 @@ class Process extends Shape {
 
 // Basically, each shape behaves like this one
 // and these function must be contained for calling:
-// draw, judgeInShape, getLineReference, resetLinesPosition
+// draw, judgeInShape, getLineReference, resetLinesPosition, drawOnOtherCanvas
 
 export default Process

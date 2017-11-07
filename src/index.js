@@ -1,3 +1,4 @@
+import generateImage from './core/generateImage'
 import init from './init'
 import _ from './common/util'
 
@@ -85,6 +86,9 @@ import _ from './common/util'
     }
     init() {
       init(this.instanceSetting, this.shapeList)
+    }
+    generateImage () {
+      return generateImage(this.shapeList)
     }
   }
 

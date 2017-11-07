@@ -70,14 +70,14 @@ class Shape {
     this.canvas.height = this.el.height = this.height = height
     this.el.style.height = this.canvas.style.height = height + 'px'
   }
-  resetDrawStyle () {
-    this.context.lineCap = 'round'
-    this.context.lineJoin = 'round'
+  resetDrawStyle (context) {
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
 
-    this.context.fillStyle = this.drawStyle.fillStyle
-    this.context.strokeStyle = this.drawStyle.strokeStyle
-    this.context.lineWidth = this.drawStyle.lineWidth
-    this.context.setLineDash(this.drawStyle.lineDash)
+    context.fillStyle = this.drawStyle.fillStyle
+    context.strokeStyle = this.drawStyle.strokeStyle
+    context.lineWidth = this.drawStyle.lineWidth
+    context.setLineDash(this.drawStyle.lineDash)
   }
   /*
   setFillStyle (fillStyle) {

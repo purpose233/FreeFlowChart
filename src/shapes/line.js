@@ -40,6 +40,7 @@ class Line {
     // src and dest contain shape, position
     this.src = src
     this.dest = dest
+    this.type = 'line'
 
     this.width = 0
     this.height = 0
@@ -136,40 +137,10 @@ class Line {
     let parent = document.getElementById('designer_canvas')
     parent.removeChild(this.el)
   }
-  resetDrawStyle () {
-    this.context.strokeStyle = this.drawStyle.strokeStyle
-    this.context.lineWidth = this.drawStyle.lineWidth
-    this.context.setLineDash(this.drawStyle.lineDash)
-  }
-  drawArrow (angle) {
-    this.context.translate(this.drawEndPosition.x, this.drawEndPosition.y)
-    this.context.rotate(angle)
-    this.context.beginPath()
-    this.context.moveTo(0, 0)
-    this.context.lineTo(5, 14)
-    this.context.lineTo(-5, 14)
-    this.context.fillStyle = '#000000'
-    this.context.fill()
-    this.context.translate(-this.drawEndPosition.x, -this.drawEndPosition.y)
-  }
-  drawReferMark (end) {
-    let position
-    if (end === 'src') {
-      position = {
-        x: this.drawBeginPosition.x,
-        y: this.drawBeginPosition.y
-      }
-    }
-    else {
-      position = {
-        x: this.drawEndPosition.x,
-        y: this.drawEndPosition.y
-      }
-    }
-    this.context.beginPath()
-    this.context.arc(position.x, position.y, this.padding, 0, 2 * Math.PI)
-    this.context.fillStyle = colors.lineArrowHightlight
-    this.context.fill()
+  resetDrawStyle (context) {
+    context.strokeStyle = this.drawStyle.strokeStyle
+    context.lineWidth = this.drawStyle.lineWidth
+    context.setLineDash(this.drawStyle.lineDash)
   }
   calcDrawingBeginEndPoints () {
     if ((this.dest.position.x - this.src.position.x) >= 0) {
@@ -233,42 +204,80 @@ class Line {
     }
     return angle
   }
-  drawLineBody () {
+  drawArrow (angle, context) {
+    context.translate(this.drawEndPosition.x, this.drawEndPosition.y)
+    context.rotate(angle)
+    context.beginPath()
+    context.moveTo(0, 0)
+    context.lineTo(5, 14)
+    context.lineTo(-5, 14)
+    context.fillStyle = '#000000'
+    context.fill()
+    context.translate(-this.drawEndPosition.x, -this.drawEndPosition.y)
+  }
+  drawReferMark (end, context) {
+    let position
+    if (end === 'src') {
+      position = {
+        x: this.drawBeginPosition.x,
+        y: this.drawBeginPosition.y
+      }
+    }
+    else {
+      position = {
+        x: this.drawEndPosition.x,
+        y: this.drawEndPosition.y
+      }
+    }
+    context.beginPath()
+    context.arc(position.x, position.y, this.padding, 0, 2 * Math.PI)
+    context.fillStyle = colors.lineArrowHightlight
+    context.fill()
+  }
+  drawLineBody (context) {
     switch (this.linkerType) {
       case 'straight':
-        this.context.beginPath()
-        this.context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
-        this.context.lineTo(this.drawEndPosition.x, this.drawEndPosition.y)
-        this.context.stroke()
+        context.beginPath()
+        context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
+        context.lineTo(this.drawEndPosition.x, this.drawEndPosition.y)
+        context.stroke()
         break;
       case 'bezier':
-        this.context.beginPath()
-        this.context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
-        this.context.bezierCurveTo(this.bezierControlPoints[0].x, this.bezierControlPoints[0].y,
+        context.beginPath()
+        context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
+        context.bezierCurveTo(this.bezierControlPoints[0].x, this.bezierControlPoints[0].y,
           this.bezierControlPoints[1].x, this.bezierControlPoints[1].y,
           this.drawEndPosition.x, this.drawEndPosition.y)
-        this.context.stroke()
-        this.context.beginPath()
+        context.stroke()
+        context.beginPath()
         break;
     }
   }
-  draw (referMark, isSelected) {
+  draw (referMark, isSelected, drawContext) {
+    let context = (typeof drawContext === 'undefined' || drawContext === null )
+      ? this.context : drawContext
+
     this.clearCanvas()
-    this.resetDrawStyle()
+    this.resetDrawStyle(context)
     this.calcDrawingBeginEndPoints()
 
     if (referMark) {
-      this.drawReferMark(referMark)
+      this.drawReferMark(referMark, context)
     }
 
-    this.drawLineBody()
+    this.drawLineBody(context)
     if (isSelected) {
-      this.context.strokeStyle = colors.lineBodyHighlight
-      this.context.lineWidth = 6
-      this.drawLineBody()
+      context.strokeStyle = colors.lineBodyHighlight
+      context.lineWidth = 6
+      this.drawLineBody(context)
     }
 
-    this.drawArrow(this.calcArrowAngle())
+    this.drawArrow(this.calcArrowAngle(), context)
+  }
+  drawOnOtherCanvas (context, left, top) {
+    context.translate(left, top)
+    this.draw(null, false, context)
+    context.translate(-left, -top)
   }
   // Judge whether a point is in the rectangle area which is covered by
   isPointInLineRectangle (x, y) {

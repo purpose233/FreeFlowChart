@@ -8,33 +8,12 @@
     <link rel="stylesheet" href="src/css/freeFlowChart.css">
 </head>
 <body>
-<div id="draw-tools" style="">
-</div>
-<div id="draw-main">
-    <!--
-    <div id="draw-components">
-        <div class="component-box" shapename="process">
-            <canvas class="component-item" width="30" height="30"></canvas>
-        </div>
-    </div>
-    <div id="draw-layout">
-        <div id="draw-container" style="padding:1000px;">
-            <div id="designer_canvas">
-                <canvas id="canvas-background"></canvas>
-                <div id="shape_controls">
-                    <canvas id="controls_bounding" width="120" height="90"></canvas>
-                    <div class="shape_controller n w" resizedir="nw" style="cursor:nw-resize; left:6px; top:6px;"></div>
-                    <div class="shape_controller n e" resizedir="ne" style="cursor:ne-resize; left:calc(100% - 14px); top:6px;"></div>
-                    <div class="shape_controller s e" resizedir="se" style="cursor:se-resize; left:calc(100% - 14px); top:calc(100% - 14px);"></div>
-                    <div class="shape_controller s w" resizedir="sw" style="cursor:sw-resize; left:6px; top:calc(100% - 14px);"></div>
-                </div>
-                <div id="bezier_controls">
-                </div>
-            </div>
-        </div>
-    </div>
-    -->
-</div>
+<div id="draw-tools"></div>
+<div id="draw-main"></div>
+
+<button id="test">test</button>
+<div id="test-div"></div>
+
 <script src="dist/js/FreeFlowChart.js"></script>
 <script>
     let flowChart = FreeFlowChart({
@@ -44,6 +23,11 @@
         tools: ['undo', 'redo', 'bold', 'italic', 'underline']
       }
     })
+
+    document.getElementById('test').onclick = () => {
+      let image = flowChart.generateImage()
+      document.getElementById('test-div').appendChild(image)
+    }
 </script>
 </body>
 </html>

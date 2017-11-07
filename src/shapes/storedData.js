@@ -4,9 +4,13 @@ class StoredData extends Terminator {
   constructor (el, type, left, top, width, height) {
     super(el, type, left, top, width, height)
   }
-  draw (paddingHorizontal, paddingVertical) {
-    let horizontal = typeof paddingHorizontal === 'undefined' ? this.padding : paddingHorizontal
-    let vertical = typeof paddingVertical === 'undefined' ? this.padding : paddingVertical
+  draw (paddingHorizontal, paddingVertical, drawContext) {
+    let horizontal = (typeof paddingHorizontal === 'undefined' || paddingHorizontal === null)
+      ? this.padding : paddingHorizontal
+    let vertical = (typeof paddingVertical === 'undefined' || paddingVertical === null)
+      ? this.padding : paddingVertical
+    let context = (typeof drawContext === 'undefined' || drawContext === null )
+      ? this.context : drawContext
 
     let radius = (this.height - 2 * vertical) / 2
     let centerA = [], centerB = []
@@ -15,16 +19,17 @@ class StoredData extends Terminator {
     centerB.x = (this.width - horizontal) / this.calcWidthHeightRatio() - radius
     centerB.y = vertical + radius
 
-    this.resetDrawStyle()
-    this.context.beginPath()
-    this.context.scale(this.calcWidthHeightRatio(), 1)
-    this.context.arc(centerA.x, centerA.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)
-    this.context.lineTo(centerB.x, vertical)
-    this.context.arc(centerB.x, centerB.y, radius, 1.5 * Math.PI, 0.5 * Math.PI)
-    this.context.closePath()
-    this.context.fill()
-    this.context.arc(centerB.x, centerB.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)
-    this.context.stroke()
+    this.resetDrawStyle(context)
+    context.beginPath()
+    context.scale(this.calcWidthHeightRatio(), 1)
+    context.arc(centerA.x, centerA.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)
+    context.lineTo(centerB.x, vertical)
+    context.arc(centerB.x, centerB.y, radius, 1.5 * Math.PI, 0.5 * Math.PI)
+    context.closePath()
+    context.fill()
+    context.arc(centerB.x, centerB.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)
+    context.stroke()
+    context.scale(1 / this.calcWidthHeightRatio(), 1)
   }
 }
 

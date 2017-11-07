@@ -20,12 +20,27 @@ function calcCanvasSize (shapeList) {
   }
 }
 
-function generationImage (shapeList) {
+function generateImage (shapeList) {
   if (!shapeList || shapeList.length <= 0) { return null }
   let canvasData = calcCanvasSize(shapeList)
   if (!canvasData) { return null }
   let canvas = document.createElement('canvas')
-  
+
+  canvas.width = canvasData.width
+  canvas.height = canvasData.height
+  let context = canvas.getContext('2d')
+
+  let shape, left, top
+  for (let i = 0; i < shapeList.length; i++) {
+    shape = shapeList[i]
+    left = shape.left - canvasData.offsetX
+    top = shape.top - canvasData.offsetY
+    shape.drawOnOtherCanvas(context, left, top)
+  }
+
+  let image = new Image();
+  image.src = canvas.toDataURL("image/png");
+  return image
 }
 
-export default generationImage
+export default generateImage
