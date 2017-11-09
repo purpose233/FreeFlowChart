@@ -1,0 +1,38 @@
+{
+  "name": "free-flow-chart",
+  "version": "1.0.0",
+  "description": "A simple framework for drawing flow charts.",
+  "main": "./dist/FreeFlowChart.min.js",
+  "scripts": {
+    "build-mac": "export WEBPACK_ENV=build&&webpack",
+    "build-win": "set WEBPACK_ENV=build&&webpack",
+    "dev-mac": "export WEBPACK_ENV=dev&&webpack-dev-server --hot --progress --inline",
+    "dev-win": "set WEBPACK_ENV=dev&&webpack-dev-server --hot --progress --inline"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purpose233/FreeFlowChart.git"
+  },
+  "keywords": [
+    "'flowchart'"
+  ],
+  "author": "Purpose",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/purpose233/FreeFlowChart/issues"
+  },
+  "homepage": "https://github.com/purpose233/FreeFlowChart#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "file-loader": "^1.1.5",
+    "node-sass": "^4.6.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.0",
+    "url-loader": "^0.6.2",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.4"
+  }
+}
