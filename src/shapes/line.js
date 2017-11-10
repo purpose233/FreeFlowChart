@@ -1,8 +1,7 @@
-import {getDefaultSetting, drawingDefaultSetting} from './shapeDefaultSetting'
+import {lineSetting, drawingDefaultSetting, textDefaultSetting, defaultPadding} from './lineDefaultSetting'
 import {calcPointToPointDistance, calcPointToLineDistance} from "../core/calculation/calcDistance";
 import {calcPointToLineFoot} from "../core/calculation/calcPosition";
 import colors from '../common/colors'
-import {defaultPadding} from "./shapeDefaultSetting"
 
 let lineId = 0
 const lineAreaWidth = 7
@@ -52,7 +51,7 @@ class Line {
     if (settings) {
 
     }
-    let temp = getDefaultSetting('line')
+    let temp = lineSetting
     this.linkerType = temp.linkerType
     this.arrowType = temp.arrowType
 
@@ -137,7 +136,7 @@ class Line {
     let parent = document.getElementById('designer_canvas')
     parent.removeChild(this.el)
   }
-  resetDrawStyle (context) {
+  setDrawStyle (context) {
     context.strokeStyle = this.drawStyle.strokeStyle
     context.lineWidth = this.drawStyle.lineWidth
     context.setLineDash(this.drawStyle.lineDash)
@@ -261,7 +260,7 @@ class Line {
     if (context === this.context) {
       this.clearCanvas()
     }
-    this.resetDrawStyle(context)
+    this.setDrawStyle(context)
     this.calcDrawingBeginEndPoints()
 
     if (referMark) {

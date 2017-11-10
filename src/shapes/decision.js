@@ -30,7 +30,7 @@ class Decision extends Shape {
     let context = (typeof drawContext === 'undefined' || drawContext === null )
       ? this.context : drawContext
 
-    this.resetDrawStyle(context)
+    this.setDrawStyle(context)
     context.beginPath()
     context.moveTo(this.width / 2, vertical)
     context.lineTo(this.width - horizontal, this.height / 2)

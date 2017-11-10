@@ -1,18 +1,29 @@
 import _ from '../common/util'
-import {tools, toolsGroup, simplyToolTypes} from './toolbarDefaultSetting'
+import {tools, simplyToolTypes} from './toolbarDefaultSetting'
 
 function getToolHtml (type) {
   if (_.contains(simplyToolTypes, type)) {
-    return`<div id="tool-${type}" 
-      class="toolbar-button" 
-      hint-data="${tools[type].hint}"
-      disabled="${type !== 'undo' && type !== 'redo' ? 'disabled' : ''}">
-      <i class="icon fa ${tools[type].faClass}"></i>
+    return `<div id="tool-${type}" 
+      class="toolbar-button ${type !== 'undo' && type !== 'redo' ? 'disabled' : ''}"
+      hint-data="${tools[type].hint}">
+      <div class="icon ${tools[type].className}"></div>
     </div>`
   }
+  let values = tools[type].styleValue
   switch (type) {
-    case 'fontName':
+    case 'fontFamily':
     case 'fontSize':
+      let dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
+      for (let i = 0; i < values.length; i++) {
+        dropdownHtml += `<li style="${tools[type].className}:${values[i]}" data="${values[i]}">${values[i]}</li>`
+      }
+      dropdownHtml += `</ul>`
+      return `<div id="tool-${tools[type].className}"
+        class="toolbar-button disabled"
+        hint-data="${tools[type].hint}">
+          <div class="text-content">${tools[type].defaultValue}</div>
+          <div class="icon dropdown"></div>
+        </div>` + dropdownHtml
     case 'fontColor':
     case 'fillStyle':
     case 'strokeStyle':
@@ -27,19 +38,21 @@ function getToolHtml (type) {
 function createTools (el, enabledTools) {
   el.classList.add('fff-draw-tools')
 
-  let html = ''
+  let html = '', toolNames = _.properties(tools)
 
-  for (let i = 0; i < toolsGroup.length; i++) {
-    let btnsHtml = ''
-    for (let j = 0; j < toolsGroup[i].length; j++) {
-      if (_.contains(enabledTools, toolsGroup[i][j])) {
-        btnsHtml += getToolHtml(toolsGroup[i][j])
+  for (let i = 0; i < enabledTools.length; i++) {
+    let type = _.find(toolNames, (value, index) => {
+      if (value.toLowerCase().trim() === enabledTools[i].toLowerCase().trim()) {
+        return value
       }
-    }
-    if (btnsHtml !== '') {
-      html += '<div class="btn-group">' + btnsHtml + '</div>'
+      else return false
+    })
+
+    if (type) {
+      html += getToolHtml(type)
     }
   }
+
   el.innerHTML = html
 }
 

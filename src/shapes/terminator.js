@@ -74,7 +74,7 @@ class Terminator extends Shape {
     centerB.x = (this.width - horizontal) / radio - radius
     centerB.y = vertical + radius
 
-    this.resetDrawStyle(context)
+    this.setDrawStyle(context)
     context.beginPath()
     context.scale(this.calcWidthHeightRatio(), 1)
     context.arc(centerA.x, centerA.y, radius, 0.5 * Math.PI, 1.5 * Math.PI)

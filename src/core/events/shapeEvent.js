@@ -16,24 +16,6 @@ let resizeData = {
   originTop: 0
 }
 
-function clearLineData () {
-  eventCommon.lineData.activeLine = null
-  eventCommon.lineData.isActive = false
-  eventCommon.lineData.src = {
-    position: null,
-    referPercent: null,
-    referPosition: null,
-    shape: null
-  }
-  eventCommon.lineData.dest = {
-    position: null,
-    referPercent: null,
-    referPosition: null,
-    shape: null
-  }
-  eventCommon.lineData.needDeleted = false
-}
-
 function redrawActiveLine (shape, reference, mark) {
   if (eventCommon.lineData.type === 'toSrc') {
     let src = {
@@ -356,7 +338,7 @@ function shapeEventOnMouseUp (event, shapeList) {
     }
     // Remove the line mark.
     line.draw(null, !!eventCommon.lineData.selectedLine)
-    clearLineData()
+    eventCommon.clearLineData()
   }
   else if (eventCommon.activeShape) {
     eventCommon.selectedShape = eventCommon.activeShape
@@ -397,7 +379,7 @@ function shapeEventOnKeyDown (event, shapeList) {
     else if (eventCommon.lineData.isActive || eventCommon.lineData.selectedLine) {
       let line = (eventCommon.lineData.isActive) ? eventCommon.lineData.activeLine : eventCommon.lineData.selectedLine
       eventCommon.deleteShapeInListById(line.id, shapeList)
-      clearLineData()
+      eventCommon.clearLineData()
     }
   }
 }

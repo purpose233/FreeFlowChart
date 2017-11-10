@@ -1,5 +1,6 @@
 import {getDefaultSetting, drawingDefaultSetting, textDefaultSetting, defaultPadding} from './shapeDefaultSetting'
 import _ from '../common/util'
+import {tools} from "../toolbar/toolbarDefaultSetting";
 
 let shapeId = 0
 
@@ -70,7 +71,7 @@ class Shape {
     this.canvas.height = this.el.height = this.height = height
     this.el.style.height = this.canvas.style.height = height + 'px'
   }
-  resetDrawStyle (context) {
+  setDrawStyle (context) {
     context.lineCap = 'round'
     context.lineJoin = 'round'
 
@@ -79,22 +80,9 @@ class Shape {
     context.lineWidth = this.drawStyle.lineWidth
     context.setLineDash(this.drawStyle.lineDash)
   }
-  /*
-  setFillStyle (fillStyle) {
-    this.fillStyle = fillStyle
-    this.resetDrawStyle()
-  }
-  setStrokeStyle (strokeStyle) {
-    this.strokeStyle = strokeStyle
-    this.resetDrawStyle()
-  }
-  setLineWidth (lineWidth) {
-    this.lineWidth = lineWidth
-    this.resetDrawStyle()
-  }*/
   setLineDash (lineDash) {
     this.lineDash = lineDash
-    this.resetDrawStyle()
+    this.setDrawStyle()
   }
   addLine (line, type, referPosition, referPercent) {
     this.relativeLines.push({
@@ -135,20 +123,36 @@ class Shape {
       this.shapeText.style[prop] = this.textStyle[prop]
     }
   }
-  setTextareaSingleStyle (prop, value) {
+  resetTextareaSingleStyle (prop, value) {
     if (_.containsProp(this.textStyle, prop)) {
       this.textStyle[prop] = value
       this.shapeText.style[prop] = value
     }
   }
-  getTextareaStyle () {
+  resetDrawSingleStyle (prop, value) {
 
+  }
+  resetSingleStyle (prop, value) {
+    if (_.contains(_.properties(this.textStyle), prop)) {
+      return this.resetTextareaSingleStyle(prop, value)
+    }
+    if (_.contains(_.properties(this.drawStyle), prop)) {
+      return this.resetDrawSingleStyle(prop, value)
+    }
   }
   getAllStyle () {
     let style = {}
     for (let prop in this.textStyle) { style[prop] = this.textStyle[prop] }
     for (let prop in this.drawStyle) { style[prop] = this.drawStyle[prop] }
     return style
+  }
+  getStyleOfType (type) {
+    if (_.contains(_.properties(this.textStyle), type)) {
+      return this.textStyle[tools[type].styleName]
+    }
+    if (_.contains(_.properties(this.drawStyle), type)) {
+      return this.drawStyle[tools[type].styleName]
+    }
   }
 }
 

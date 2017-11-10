@@ -78,13 +78,15 @@ _.isArray = function (list) {
   return Array.isArray(list)
 }
 
-_.contains = function (list, value) {
+_.contains = function (list, value, compare) {
   if (!_.isObject(list)) {
-    return list === value
+    return compare ? compare(list, value) : list === value
   }
   else {
     for (let i in list) {
-      if (value === list[i]) { return true }
+      if (compare ? compare(value, list[i]) : value === list[i]) {
+        return true
+      }
     }
   }
   return false
@@ -126,6 +128,15 @@ _.properties = function (o) {
     props.push(prop)
   }
   return props
+}
+
+_.find = function (list, predicate) {
+  if (!_.isObject(list)) { return null }
+  for (let prop in list) {
+    let result = predicate(list[prop], prop)
+    if (false !== result) { return result }
+  }
+  return false
 }
 
 export default _

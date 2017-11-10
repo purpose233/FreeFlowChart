@@ -1,5 +1,11 @@
 import {calcPositionInCanvas} from '../calculation/calcPosition'
 import controllerDraw from '../../draw/controller'
+import {tools} from '../../toolbar/toolbarDefaultSetting'
+
+function parentContainsClass (el, className) {
+  return el.parentNode && el.parentNode.classList
+    && el.parentNode.classList.contains(className)
+}
 
 let eventCommon = {
   shapeController: {
@@ -68,6 +74,32 @@ let eventCommon = {
     // Type values: 'new', 'toDest', 'toSrc'
   },
 
+  toolbarData: {
+    type: null,
+    element: null
+  },
+
+  clearLineData () {
+    this.lineData.activeLine = null
+    this.lineData.isActive = false
+    this.lineData.src = {
+      position: null,
+      referPercent: null,
+      referPosition: null,
+      shape: null
+    }
+    this.lineData.dest = {
+      position: null,
+      referPercent: null,
+      referPosition: null,
+      shape: null
+    }
+    this.lineData.needDeleted = false
+  },
+  clearToolbarData () {
+    this.toolbarData.type = null
+    this.toolbarData.element = null
+  },
   getShapeInListById: function (shapeId, shapeList) {
     for (let i = 0; i < shapeList.length; i++) {
       // If the line is being moved, ignore it
@@ -116,25 +148,28 @@ let eventCommon = {
     return null
   },
   judgeEventAt: function (event, shapeList) {
-    if (!event.target || !event.target.classList) {
+    let el = event.target
+    if (!el || !el.classList) {
       return {shape: null, type: 'empty'}
     }
 
     let result, shape
     let position = calcPositionInCanvas(event.pageX, event.pageY)
 
-    if (event.target.classList.contains('toolbar-button')
-      || event.target.parentNode.classList && event.target.parentNode.classList.contains('toolbar-button')) {
+    if (el.classList.contains('toolbar-button')
+      || parentContainsClass(el, 'toolbar-button')
+      || el.classList.contains('dropdown-menu')
+      || parentContainsClass(el, 'dropdown-menu')) {
       return { shape: null, type: 'tool' }
     }
-    else if (event.target.classList.contains('shape-controller')) {
+    else if (el.classList.contains('shape-controller')) {
       return {
         shape: this.selectedShape,
         type: 'controller'
       }
     }
-    else if (event.target.parentNode.getAttribute
-      && event.target.parentNode.getAttribute('id') === 'shape-controls') {
+    else if (el.parentNode.getAttribute
+      && el.parentNode.getAttribute('id') === 'shape-controls') {
       // For now, the selected shape has no priority
       // which is the same as processon's work.
       result = this.judgeInShapeList(position, shapeList, -1)
@@ -146,9 +181,8 @@ let eventCommon = {
       }
       return result
     }
-    else if (event.target.parentNode.classList
-      && event.target.parentNode.classList.contains('shape-box')) {
-      let shapeId = event.target.parentNode.getAttribute('shapeid')
+    else if (parentContainsClass(el, 'shape-box')) {
+      let shapeId = el.parentNode.getAttribute('shapeid')
       shape = this.getShapeInListById(shapeId, shapeList)
 
       if (!shape) {
@@ -181,8 +215,43 @@ let eventCommon = {
     //              controller
     //              empty
     //              tool
-  }
+  },
+  judgeEventOnToolbar: function (event) {
+    let el = event.target, type, value, isTool = false
 
+    if (el.classList.contains('disabled') || parentContainsClass(el, 'disabled')) {
+      value = type = null
+    }
+    else if (el.classList.contains('toolbar-button')
+      || parentContainsClass(el, 'toolbar-button')
+      || el.classList.contains('dropdown-menu')) {
+      isTool = true
+      value = null
+    }
+    else if (parentContainsClass(el, 'dropdown-menu')) {
+      isTool = true
+      type = 'setValue'
+      value = el.innerText
+    }
+    else if (false) {
+      // For now, the color picker is not considered.
+    }
+    if (isTool && !type) {
+      let className = el.getAttribute && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
+      if (!className) {
+        el = el.parentNode
+        className = el.getAttribute && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null
+      }
+
+      for (let prop in tools) {
+        if (tools[prop].className === className) {
+          type = prop
+        }
+      }
+    }
+
+    return {type: type, value: value}
+  }
 }
 
 export default eventCommon

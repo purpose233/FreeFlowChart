@@ -13,7 +13,7 @@ class Process extends Shape {
     let context = (typeof drawContext === 'undefined' || drawContext === null )
       ? this.context : drawContext
 
-    this.resetDrawStyle(context)
+    this.setDrawStyle(context)
     context.fillRect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical)
     context.beginPath()
     context.rect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical);

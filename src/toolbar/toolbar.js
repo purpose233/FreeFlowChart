@@ -3,7 +3,13 @@ import _ from '../common/util'
 import {tools, simplyToolTypes} from "./toolbarDefaultSetting";
 
 function getToolType (el) {
-  return el.getAttribute('id').slice(5)
+  let className = el.getAttribute('id').slice(5)
+  for (let prop in tools) {
+    if (tools[prop].className === className) {
+      return prop
+    }
+  }
+  return null
 }
 
 function styleToState (style) {
@@ -15,6 +21,27 @@ function styleToState (style) {
     }
   }
   return state
+}
+
+function setToolState (type, element, value) {
+  if (typeof value !== 'undefined') {
+    element.classList.remove('disabled')
+  }
+  switch (type) {
+    case 'fontFamily':
+    case 'fontSize':
+      if (_.contains(tools[type].styleValue, value)) {
+        element.getElementsByClassName('text-content')[0].innerText = value
+      }
+      break;
+    case 'fontColor':
+    case 'fillStyle':
+    case 'strokeStyle':
+    case 'lineWidth':
+    case 'lineDash':
+    case 'linkerType':
+    case 'arrowType':
+  }
 }
 
 class Toolbar {
@@ -30,22 +57,30 @@ class Toolbar {
     this.toolElements = this.el.getElementsByClassName('toolbar-button')
   }
   setToolbarState (style) {
-    let type
+    let type, toolEl
     let state = styleToState(style)
 
     for (let i = 0; i < this.toolElements.length; i++) {
-      type = getToolType(this.toolElements[i])
+      toolEl = this.toolElements[i]
+      type = getToolType(toolEl)
       if (type === 'undo' || type === 'redo') { continue }
       if (_.contains(_.properties(state), type)) {
         if (_.contains(simplyToolTypes, type)) {
-          this.toolElements[i].setAttribute('disabled', '')
+          toolEl.classList.remove('disabled')
+          toolEl.setAttribute('disabled', '')
           if (state[type] !== tools[type].styleValue[0]) {
-            this.toolElements[i].classList.add('active')
+            toolEl.classList.add('active')
           }
+          else {
+            toolEl.classList.remove('active')
+          }
+        }
+        else {
+          setToolState(type, toolEl, state[type])
         }
       }
       else {
-        this.toolElements[i].setAttribute('disabled', 'disabled')
+        toolEl.classList.add('disabled')
       }
     }
   }
@@ -54,7 +89,8 @@ class Toolbar {
     for (let i = 0; i < this.toolElements.length; i++) {
       type = getToolType(this.toolElements[i])
       if (type !== 'undo' && type !== 'redo') {
-        this.toolElements[i].setAttribute('disabled', 'disabled')
+        this.toolElements[i].classList.add('disabled')
+        this.toolElements[i].classList.remove('active')
       }
     }
   }

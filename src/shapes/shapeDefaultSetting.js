@@ -24,10 +24,6 @@ let storedData = {
   height: 90,
   shapeName: '数据库'
 }
-let line = {
-  linkerType: 'straight',
-  arrowType: 'basic'
-}
 
 function getDefaultSetting (type) {
   switch (type) {
@@ -35,7 +31,6 @@ function getDefaultSetting (type) {
     case 'decision': return decision
     case 'terminator': return terminator
     case 'storedData': return storedData
-    case 'line': return line
     default: return basic
   }
 }
@@ -52,7 +47,7 @@ let textDefaultSetting = {
   fontStyle: 'normal',
   textDecoration: 'none',
   fontFamily: 'Arial',
-  fontSize: 'x-normal',
+  fontSize: '12px',
   color: colors.textDefaultColor
 }
 
