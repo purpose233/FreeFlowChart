@@ -1,5 +1,29 @@
 import _ from '../common/util'
-import {tools, simplyToolTypes} from './toolbarDefaultSetting'
+import {tools, simplyToolTypes, selectableColors} from './toolbarDefaultSetting'
+
+function getColorPicker () {
+  let colorsHtml = '', innerHtml = ''
+
+  // First 12 colors are from white to black.
+  for (let i = 0; i < 12; i++) {
+    let r = selectableColors[i][0]
+    let g = selectableColors[i][1]
+    let b = selectableColors[i][2]
+    innerHtml += `<div style="background-color:rgb(${r},${g},${b});" color="${r},${g},${b}"></div>`
+  }
+  colorsHtml += `<div class="color-column">${innerHtml}<div class="clear"></div></div>`
+
+  innerHtml = ''
+  for (let i = 12; i < selectableColors.length; i++) {
+    let r = selectableColors[i][0]
+    let g = selectableColors[i][1]
+    let b = selectableColors[i][2]
+    innerHtml += `<div style="background-color:rgb(${r},${g},${b});" color="${r},${g},${b}"></div>`
+  }
+  colorsHtml += `<div class="color-column">${innerHtml}<div class="clear"></div></div>`
+
+  return `<div id="color-picker" class="color-menu">${colorsHtml}</div>`
+}
 
 function getToolHtml (type) {
   if (_.contains(simplyToolTypes, type)) {
@@ -51,6 +75,12 @@ function createTools (el, enabledTools) {
     if (type) {
       html += getToolHtml(type)
     }
+  }
+
+  if (_.contains(enabledTools, 'fontcolor')
+    || _.contains(enabledTools, 'fillstyle')
+    || _.contains(enabledTools, 'strokestyle')) {
+    html += getColorPicker()
   }
 
   el.innerHTML = html

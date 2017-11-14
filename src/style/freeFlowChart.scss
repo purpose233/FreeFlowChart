@@ -26,6 +26,16 @@
   box-shadow: $value;
 }
 
+@mixin menu () {
+  @include shadow(0px 8px 16px 0px rgba(0, 0, 0, 0.3));
+  z-index: 4 !important;
+  position: absolute;
+  background: #FFF;
+  border-radius: 4px;
+  border: 1px solid rgb(180,180,180);
+  margin: 0;
+}
+
 .fff-draw-main {
   width: 100%;
   -webkit-user-select:none;
@@ -218,14 +228,9 @@
     }
   }
   .dropdown-menu {
-    @include shadow(0px 8px 16px 0px rgba(0, 0, 0, 0.3));
-    z-index: 4 !important;
-    position: absolute;
-    background: #FFF;
-    border-radius: 4px;
-    border: 1px solid rgb(180,180,180);
-    padding: 4px 0px;
-    margin: 0;
+    @include menu;
+    padding: 4px 0;
+
     li {
       cursor: default;
       line-height: 26px;
@@ -242,6 +247,36 @@
         top: 3px;
         vertical-align: middle;
         position: absolute;
+      }
+    }
+  }
+  .color-menu {
+    @include menu;
+    padding: 0 8px;
+
+    .color-column {
+      margin: 8px 0;
+      width: 156px;
+      border-right: 1px #000 solid;
+      border-bottom: 1px #000 solid;
+      .clear {
+        border: none;
+        height: 0;
+        width: 0;
+        float: none;
+        clear: both;
+      }
+      div {
+        float: left;
+        height: 12px;
+        width: 12px;
+        border-top: 1px #000 solid;
+        border-left: 1px #000 solid;
+        &:hover {
+          z-index: 1;
+          border: 2px white solid;
+          margin: -1px -2px -2px -1px;
+        }
       }
     }
   }
