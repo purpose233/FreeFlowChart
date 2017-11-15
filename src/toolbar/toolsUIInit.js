@@ -9,7 +9,7 @@ function getColorPicker () {
     let r = selectableColors[i][0]
     let g = selectableColors[i][1]
     let b = selectableColors[i][2]
-    innerHtml += `<div style="background-color:rgb(${r},${g},${b});" color="${r},${g},${b}"></div>`
+    innerHtml += `<div style="background-color:rgb(${r},${g},${b});" color="rgb(${r},${g},${b})"></div>`
   }
   colorsHtml += `<div class="color-column">${innerHtml}<div class="clear"></div></div>`
 
@@ -18,11 +18,11 @@ function getColorPicker () {
     let r = selectableColors[i][0]
     let g = selectableColors[i][1]
     let b = selectableColors[i][2]
-    innerHtml += `<div style="background-color:rgb(${r},${g},${b});" color="${r},${g},${b}"></div>`
+    innerHtml += `<div style="background-color:rgb(${r},${g},${b});" color="rgb(${r},${g},${b})"></div>`
   }
   colorsHtml += `<div class="color-column">${innerHtml}<div class="clear"></div></div>`
 
-  return `<div id="color-picker" class="color-menu">${colorsHtml}</div>`
+  return `<div id="color-picker" class="color-menu" style="display: none">${colorsHtml}</div>`
 }
 
 function getToolHtml (type) {
@@ -51,6 +51,13 @@ function getToolHtml (type) {
     case 'fontColor':
     case 'fillStyle':
     case 'strokeStyle':
+      return `<div id="tool-${tools[type].className}" 
+        class="toolbar-button disabled" 
+        hint-data="${tools[type].hint}">
+            <div class="icon ${tools[type].className}"></div>
+            <div class="btn-color"></div>
+            <div class="icon dropdown"></div>
+        </div>`
     case 'lineWidth':
     case 'lineDash':
     case 'linkerType':

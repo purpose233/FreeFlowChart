@@ -231,7 +231,7 @@ class Line {
     }
     context.beginPath()
     context.arc(position.x, position.y, this.padding, 0, 2 * Math.PI)
-    context.fillStyle = colors.lineArrowHightlight
+    context.fillStyle = colors.lineArrowHighlight
     context.fill()
   }
   drawLineBody (context) {

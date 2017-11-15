@@ -23,17 +23,30 @@ function simpleToolHandler (type, el, shape) {
 }
 
 function showTypeMenu (type, element, value) {
-  if (type === 'fillStyle' || type === 'strokeStyle') {
-    // Do things with color picker
+  let menu
+  if (type === 'fillStyle' || type === 'strokeStyle' || type === 'fontColor') {
+    menu = document.getElementById('color-picker')
+    if (!menu) { return }
+    let colorDivs = menu.querySelectorAll('.color-column div')
+
+    let selectedDiv = menu.querySelector('.selected')
+    if (selectedDiv) {
+      selectedDiv.classList.remove('selected')
+    }
+    // Note that one div of colors is used to clear float.
+    for (let i = 0; i < colorDivs.length - 1; i++) {
+      let color = colorDivs[i].getAttribute('color')
+      if (_.compareColor(value, color)) {
+        colorDivs[i].classList.add('selected')
+        break;
+      }
+    }
   }
   else {
     // let content = element.getElementsByClassName('text-content')[0]
     // content.innerText = value
-    let menu = document.getElementById('menu-' + tools[type].className)
+    menu = document.getElementById('menu-' + tools[type].className)
     if (!menu) { return }
-    menu.style.left = element.offsetLeft + 'px'
-    menu.style.top = element.offsetTop + element.offsetHeight + 'px'
-    menu.style.display = 'block'
     let options = menu.getElementsByTagName('li')
     for (let i = 0; i < options.length; i++) {
       if (options[i].innerText === value) {
@@ -42,14 +55,17 @@ function showTypeMenu (type, element, value) {
       }
     }
   }
+  menu.style.left = element.offsetLeft + 'px'
+  menu.style.top = element.offsetTop + element.offsetHeight + 'px'
+  menu.style.display = 'block'
 }
 
 function hideOpenedMenu () {
   let type = eventCommon.toolbarData.type, menu
   if (type) {
     eventCommon.toolbarData.element.classList.remove('active')
-    if (type === 'fillStyle' || type === 'strokeStyle') {
-      // Get color picker
+    if (type === 'fillStyle' || type === 'strokeStyle' || type === 'fontColor') {
+      menu = document.getElementById('color-picker')
     }
     else {
       menu = document.getElementById('menu-' + tools[type].className)
@@ -78,6 +94,7 @@ function toolbarEventOnMouseDown (event, shapeList) {
     }
     else {
       toolElement = getToolElement(type)
+      hideOpenedMenu()
       eventCommon.clearToolbarData()
     }
 
@@ -95,9 +112,27 @@ function toolbarEventOnMouseDown (event, shapeList) {
         simpleToolHandler(type, toolElement, eventCommon.selectedShape)
         break;
       case 'setValue':
-        shape.resetSingleStyle(tools[eventCommon.toolbarData.type].styleName, judgeResult.value)
-        let content = eventCommon.toolbarData.element.getElementsByClassName('text-content')[0]
-        content.innerText = judgeResult.value
+        type = eventCommon.toolbarData.type
+        shape.resetSingleStyle(tools[type].styleName, judgeResult.value)
+        switch (type) {
+          case 'fontFamily':
+          case 'fontSize':
+            let content = eventCommon.toolbarData.element.getElementsByClassName('text-content')[0]
+            content.innerText = judgeResult.value
+            break;
+          case 'fontColor':
+          case 'fillStyle':
+          case 'strokeStyle':
+            let color = eventCommon.toolbarData.element.getElementsByClassName('btn-color')[0]
+            color.style.background = judgeResult.value
+            break;
+          case 'lineWidth':
+          case 'lineDash':
+          case 'linkerType':
+          case 'arrowType':
+        }
+
+
         eventCommon.clearToolbarData()
         break;
       default:

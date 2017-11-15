@@ -59,6 +59,10 @@ class Shape {
     let parent = document.getElementById('designer_canvas')
     parent.removeChild(this.el)
   }
+  clearCanvas () {
+    this.canvas.width = this.width
+  }
+  draw () {}
   setPosition (left, top) {
     this.left = left
     this.top = top
@@ -130,7 +134,11 @@ class Shape {
     }
   }
   resetDrawSingleStyle (prop, value) {
-
+    if (_.containsProp(this.drawStyle, prop)) {
+      this.drawStyle[prop] = value
+      this.clearCanvas()
+      this.draw()
+    }
   }
   resetSingleStyle (prop, value) {
     if (_.contains(_.properties(this.textStyle), prop)) {
@@ -147,11 +155,12 @@ class Shape {
     return style
   }
   getStyleOfType (type) {
-    if (_.contains(_.properties(this.textStyle), type)) {
-      return this.textStyle[tools[type].styleName]
+    let styleName = tools[type].styleName
+    if (_.contains(_.properties(this.textStyle), styleName)) {
+      return this.textStyle[styleName]
     }
-    if (_.contains(_.properties(this.drawStyle), type)) {
-      return this.drawStyle[tools[type].styleName]
+    if (_.contains(_.properties(this.drawStyle), styleName)) {
+      return this.drawStyle[styleName]
     }
   }
 }

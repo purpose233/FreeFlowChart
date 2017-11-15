@@ -37,6 +37,8 @@ function setToolState (type, element, value) {
     case 'fontColor':
     case 'fillStyle':
     case 'strokeStyle':
+      element.getElementsByClassName('btn-color')[0].style.background = value
+      break;
     case 'lineWidth':
     case 'lineDash':
     case 'linkerType':

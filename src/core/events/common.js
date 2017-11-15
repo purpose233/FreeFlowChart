@@ -159,7 +159,10 @@ let eventCommon = {
     if (el.classList.contains('toolbar-button')
       || parentContainsClass(el, 'toolbar-button')
       || el.classList.contains('dropdown-menu')
-      || parentContainsClass(el, 'dropdown-menu')) {
+      || parentContainsClass(el, 'dropdown-menu')
+      || el.getAttribute && el.getAttribute('id') === 'color-picker'
+      || el.classList.contains && el.classList.contains('color-column')
+      || parentContainsClass(el, 'color-column')) {
       return { shape: null, type: 'tool' }
     }
     else if (el.classList.contains('shape-controller')) {
@@ -233,8 +236,14 @@ let eventCommon = {
       type = 'setValue'
       value = el.innerText
     }
-    else if (false) {
-      // For now, the color picker is not considered.
+    // Consider the color picker.
+    else if (el.getAttribute && el.getAttribute('id') === 'color-picker'
+      || el.classList.contains('color-column')) {
+      type = this.toolbarData.type
+    }
+    else if (parentContainsClass(el, 'color-column')) {
+      type = 'setValue'
+      value = el.getAttribute('color')
     }
     if (isTool && !type) {
       let className = el.getAttribute && el.getAttribute('id') ? el.getAttribute('id').slice(5) : null

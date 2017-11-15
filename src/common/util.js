@@ -139,4 +139,30 @@ _.find = function (list, predicate) {
   return false
 }
 
+_.colorToString = function (color) {
+  let result
+  let regHex = /^\s*#([0-9a-fA-F]{6})\s*$/
+  let regRGB = /^\s*(rgb|RGB)\s*\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)$\s*/
+  let regRBGA = /^\s*(rgba|RGBA)\s*\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)$\s*/
+  if (result = regHex.exec(color)) {
+    return result[1].toLowerCase()
+  }
+  else if (result = regRGB.exec(color)) {
+    let r = parseInt(result[2]).toString(16)
+    let g = parseInt(result[3]).toString(16)
+    let b = parseInt(result[4]).toString(16)
+    return r + g + b
+  }
+  else if (result = regRBGA.exec(color)) {
+    let r = parseInt(result[2]).toString(16)
+    let g = parseInt(result[3]).toString(16)
+    let b = parseInt(result[4]).toString(16)
+    return r + g + b + ',' + result[5]
+  }
+}
+
+_.compareColor = function (colorA, colorB) {
+  return _.colorToString(colorA) === _.colorToString(colorB)
+}
+
 export default _
