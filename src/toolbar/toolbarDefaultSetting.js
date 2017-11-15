@@ -64,31 +64,33 @@ const tools = {
     styleName: 'strokeStyle',
     styleValue: [drawingDefaultSetting.strokeStyle]
   },
-  /*
   'lineWidth' : {
     hint: '线条宽度',
-    className: ,
-    styleName: ,
-    styleValue:
+    className: 'line-width',
+    styleName: 'lineWidth',
+    styleValue: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   },
   'lineDash' : {
     hint: '线条样式',
-    className: ,
-    styleName: ,
-    styleValue:
+    className: 'line-dash',
+    styleName: 'lineDash',
+    styleValue: [[], [10, 5], [2, 3], [2, 5, 7, 5]],
+    iconClass: ['line-dash-solid', 'line-dash-dashed', 'line-dash-doted', 'line-dash-dashdoted']
   },
   'linkerType' : {
     hint: '连线类型',
-    className: ,
-    styleName: ,
-    styleValue:
+    className: 'linker-type',
+    styleName: 'linkerType',
+    styleValue: [],
+    iconClass: []
   },
   'arrowType' : {
     hint: '箭头类型',
-    className: ,
-    styleName: ,
-    styleValue:
-  }*/
+    className: 'arrow-type',
+    styleName: 'arrowType',
+    styleValue: [],
+    iconClass: []
+  }
 }
 const simplyToolTypes = [
   'undo', 'redo',

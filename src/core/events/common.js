@@ -162,7 +162,8 @@ let eventCommon = {
       || parentContainsClass(el, 'dropdown-menu')
       || el.getAttribute && el.getAttribute('id') === 'color-picker'
       || el.classList.contains && el.classList.contains('color-column')
-      || parentContainsClass(el, 'color-column')) {
+      || parentContainsClass(el, 'color-column')
+      || el.classList.contains('selected')) {
       return { shape: null, type: 'tool' }
     }
     else if (el.classList.contains('shape-controller')) {
@@ -227,14 +228,23 @@ let eventCommon = {
     }
     else if (el.classList.contains('toolbar-button')
       || parentContainsClass(el, 'toolbar-button')
-      || el.classList.contains('dropdown-menu')) {
+      || el.classList.contains('dropdown-menu')
+      || el.classList.contains('selected')) {
       isTool = true
       value = null
     }
     else if (parentContainsClass(el, 'dropdown-menu')) {
       isTool = true
       type = 'setValue'
-      value = el.innerText
+      if (this.toolbarData.type === 'lineDash'
+        || this.toolbarData.type === 'linkerType'
+        || this.toolbarData.type === 'arrowType') {
+        let selectedIndex = el.getAttribute('data-index')
+        value = tools[this.toolbarData.type].styleValue[parseInt(selectedIndex)]
+      }
+      else {
+        value = el.getAttribute('data')
+      }
     }
     // Consider the color picker.
     else if (el.getAttribute && el.getAttribute('id') === 'color-picker'

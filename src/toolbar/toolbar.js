@@ -41,6 +41,7 @@ function setToolState (type, element, value) {
       break;
     case 'lineWidth':
     case 'lineDash':
+      break;
     case 'linkerType':
     case 'arrowType':
   }

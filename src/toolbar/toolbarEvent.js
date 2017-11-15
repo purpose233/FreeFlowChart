@@ -23,37 +23,64 @@ function simpleToolHandler (type, el, shape) {
 }
 
 function showTypeMenu (type, element, value) {
-  let menu
-  if (type === 'fillStyle' || type === 'strokeStyle' || type === 'fontColor') {
-    menu = document.getElementById('color-picker')
-    if (!menu) { return }
-    let colorDivs = menu.querySelectorAll('.color-column div')
+  let menu, options
 
-    let selectedDiv = menu.querySelector('.selected')
-    if (selectedDiv) {
-      selectedDiv.classList.remove('selected')
-    }
-    // Note that one div of colors is used to clear float.
-    for (let i = 0; i < colorDivs.length - 1; i++) {
-      let color = colorDivs[i].getAttribute('color')
-      if (_.compareColor(value, color)) {
-        colorDivs[i].classList.add('selected')
-        break;
+  switch (type) {
+    case 'fontFamily':
+    case 'fontSize':
+    case 'lineWidth':
+      menu = document.getElementById('menu-' + tools[type].className)
+      if (!menu) { return }
+      options = menu.getElementsByTagName('li')
+      for (let i = 0; i < options.length; i++) {
+        let data = options[i].getAttribute('data')
+        let content = options[i].innerHTML
+        if (data === value || parseInt(data) === value) {
+          options[i].classList.add('option-selected')
+          options[i].innerHTML = `<div class="icon selected"></div>` + content
+        }
       }
-    }
-  }
-  else {
-    // let content = element.getElementsByClassName('text-content')[0]
-    // content.innerText = value
-    menu = document.getElementById('menu-' + tools[type].className)
-    if (!menu) { return }
-    let options = menu.getElementsByTagName('li')
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].innerText === value) {
-        options[i].classList.add('option-selected')
-        options[i].innerHTML = `<div class="icon selected"></div>` + value
+      break;
+    case 'fontColor':
+    case 'fillStyle':
+    case 'strokeStyle':
+      menu = document.getElementById('color-picker')
+      if (!menu) { return }
+      let colorDivs = menu.querySelectorAll('.color-column div')
+
+      let selectedColorDiv = menu.querySelector('.color-selected')
+      if (selectedColorDiv) {
+        selectedColorDiv.classList.remove('color-selected')
       }
-    }
+      // Note that one div of colors is used to clear float.
+      for (let i = 0; i < colorDivs.length - 1; i++) {
+        let color = colorDivs[i].getAttribute('color')
+        if (_.compareColor(value, color)) {
+          colorDivs[i].classList.add('color-selected')
+          break;
+        }
+      }
+      break;
+    case 'lineDash':
+      menu = document.getElementById('menu-' + tools[type].className)
+      if (!menu) { return }
+      options = menu.getElementsByTagName('li')
+      let selectedIndex = 0
+      for (let i = 0; i < options.length; i++) {
+        if (_.compare(tools[type].styleValue[i], value)) {
+          selectedIndex = i
+        }
+      }
+      for (let i = 0; i < options.length; i++) {
+        let index = options[i].getAttribute('data-index')
+        if (parseInt(index) === selectedIndex) {
+          options[i].classList.add('option-selected')
+          options[i].innerHTML = `<div class="icon selected"></div>` + options[i].innerHTML
+        }
+      }
+      break;
+    case 'linkerType':
+    case 'arrowType':
   }
   menu.style.left = element.offsetLeft + 'px'
   menu.style.top = element.offsetTop + element.offsetHeight + 'px'
@@ -73,7 +100,7 @@ function hideOpenedMenu () {
     let selectedOption = menu.getElementsByClassName('option-selected')[0]
     if (selectedOption) {
       selectedOption.classList.remove('option-selected')
-      selectedOption.innerHTML = selectedOption.getAttribute('data')
+      selectedOption.removeChild(selectedOption.children[0])
     }
     menu.style.display = 'none'
   }
@@ -131,7 +158,6 @@ function toolbarEventOnMouseDown (event, shapeList) {
           case 'linkerType':
           case 'arrowType':
         }
-
 
         eventCommon.clearToolbarData()
         break;

@@ -76,9 +76,11 @@ class Shape {
     this.el.style.height = this.canvas.style.height = height + 'px'
   }
   setDrawStyle (context) {
-    context.lineCap = 'round'
-    context.lineJoin = 'round'
+    if (this.drawStyle.lineDash.length === 0) {
+      context.lineCap = 'round'
+    }
 
+    context.lineJoin = 'round'
     context.fillStyle = this.drawStyle.fillStyle
     context.strokeStyle = this.drawStyle.strokeStyle
     context.lineWidth = this.drawStyle.lineWidth

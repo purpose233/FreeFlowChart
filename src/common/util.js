@@ -165,4 +165,24 @@ _.compareColor = function (colorA, colorB) {
   return _.colorToString(colorA) === _.colorToString(colorB)
 }
 
+_.compare = function (a, b, deep) {
+  if (!_.isObject(a) || !_.isObject(b)) {
+    return a === b
+  }
+  if (_.properties(a).length !== _.properties(b).length) {
+    return false
+  }
+  for (let prop in a) {
+    let result
+    if (_.isObject(a[prop]) && deep) {
+      result = _.compare(a[prop], b[prop], true)
+    }
+    else {
+      result = a[prop] === b[prop]
+    }
+    if (!result) { return false }
+  }
+  return true
+}
+
 export default _

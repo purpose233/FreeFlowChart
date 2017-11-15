@@ -33,11 +33,11 @@ function getToolHtml (type) {
       <div class="icon ${tools[type].className}"></div>
     </div>`
   }
-  let values = tools[type].styleValue
+  let values = tools[type].styleValue, dropdownHtml
   switch (type) {
     case 'fontFamily':
     case 'fontSize':
-      let dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
+      dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
       for (let i = 0; i < values.length; i++) {
         dropdownHtml += `<li style="${tools[type].className}:${values[i]}" data="${values[i]}">${values[i]}</li>`
       }
@@ -59,7 +59,31 @@ function getToolHtml (type) {
             <div class="icon dropdown"></div>
         </div>`
     case 'lineWidth':
+      dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
+      for (let i = 0; i < values.length; i++) {
+        dropdownHtml += `<li data="${values[i]}">${values[i] + 'px'}</li>`
+      }
+      dropdownHtml += `</ul>`
+      return `<div id="tool-${tools[type].className}"
+        class="toolbar-button disabled"
+        hint-data="${tools[type].hint}">
+          <div class="icon ${tools[type].className}"></div>
+          <div class="icon dropdown"></div>
+        </div>` + dropdownHtml
     case 'lineDash':
+      dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
+      for (let i = 0; i < values.length; i++) {
+        dropdownHtml += `<li data-index="${i}">
+            <div class="icon ${tools[type].iconClass[i]}"></div>
+          </li>`
+      }
+      dropdownHtml += `</ul>`
+      return `<div id="tool-${tools[type].className}"
+        class="toolbar-button disabled"
+        hint-data="${tools[type].hint}">
+          <div class="icon ${tools[type].className}"></div>
+          <div class="icon dropdown"></div>
+        </div>` + dropdownHtml
     case 'linkerType':
     case 'arrowType':
   }

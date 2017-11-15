@@ -19,7 +19,7 @@ import _ from './common/util'
       el: null,
       tools: ['undo', 'redo',
         'bold', 'italic', 'underline',
-        'fontName', 'fontSize', 'fontColor',
+        'fontFamily', 'fontSize', 'fontColor',
         'fillStyle', 'strokeStyle', 'lineWidth', 'lineDash',
         'linkerType', 'arrowType'
       ],
