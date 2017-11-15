@@ -52,7 +52,10 @@ class Line {
 
     }
     let temp = lineSetting
+
     this.linkerType = temp.linkerType
+    this.linkerType = 'bezier'
+
     this.arrowType = temp.arrowType
 
     this.drawStyle = {
@@ -72,7 +75,23 @@ class Line {
     this.callShapesToDetach()
   }
   init () {
+    if (this.bezierControlPoints.length === 0) {
+      let offsetX = this.dest.position.x - this.src.position.x
+      let offsetY = this.dest.position.y - this.src.position.y
+
+      this.bezierControlPoints.push({
+        x: this.src.position.x + offsetX / 3,
+        y: this.src.position.y + offsetY / 3
+      })
+      this.bezierControlPoints.push({
+        x: this.src.position.x + 2 * offsetX / 3,
+        y: this.src.position.y + 2 * offsetY / 3
+      })
+    }
     this.resetCanvas()
+  }
+  clearCanvas () {
+    this.canvas.width = this.width
   }
   resetSrcPosition (position) {
     this.src.position = position
@@ -83,34 +102,39 @@ class Line {
     this.resetCanvas()
   }
   resetCanvas () {
+    let left, top, width, height
     switch (this.linkerType) {
       case 'straight':
-        let width = Math.abs(this.src.position.x - this.dest.position.x) + 2 * this.padding
-        let height = Math.abs(this.src.position.y - this.dest.position.y) + 2 * this.padding
+        width = Math.abs(this.src.position.x - this.dest.position.x) + 2 * this.padding
+        height = Math.abs(this.src.position.y - this.dest.position.y) + 2 * this.padding
 
-        this.canvas.width = this.el.width = this.width = width
-        this.el.style.width = this.canvas.style.width = width + 'px'
-        this.canvas.height = this.el.height = this.height = height
-        this.el.style.height = this.canvas.style.height = height + 'px'
-
-        let x, y
         if ((this.dest.position.x - this.src.position.x) >= 0) {
-          x = this.src.position.x - this.padding
+          left = this.src.position.x - this.padding
         }
         else {
-          x = this.dest.position.x - this.padding
+          left = this.dest.position.x - this.padding
         }
         if ((this.dest.position.y - this.src.position.y) >= 0) {
-          y = this.src.position.y - this.padding
+          top = this.src.position.y - this.padding
         }
         else {
-          y = this.dest.position.y - this.padding
+          top = this.dest.position.y - this.padding
         }
-        this.setPosition(x, y)
         break;
       case 'bezier':
+        [left, top, width, height] = this.calcBezierArea()
+        left -= this.padding
+        top -= this.padding
+        width += 2 * this.padding
+        height += 2 * this.padding
         break;
     }
+
+    this.canvas.width = this.el.width = this.width = width
+    this.el.style.width = this.canvas.style.width = width + 'px'
+    this.canvas.height = this.el.height = this.height = height
+    this.el.style.height = this.canvas.style.height = height + 'px'
+    this.setPosition(left, top)
   }
   resetSrc (src) {
     this.src = src
@@ -142,21 +166,32 @@ class Line {
     context.setLineDash(this.drawStyle.lineDash)
   }
   calcDrawingBeginEndPoints () {
-    if ((this.dest.position.x - this.src.position.x) >= 0) {
-      this.drawBeginPosition.x = this.padding
-      this.drawEndPosition.x = this.width - this.padding
-    }
-    else {
-      this.drawBeginPosition.x = this.width - this.padding
-      this.drawEndPosition.x = this.padding
-    }
-    if ((this.dest.position.y - this.src.position.y) >= 0) {
-      this.drawBeginPosition.y = this.padding
-      this.drawEndPosition.y = this.height - this.padding
-    }
-    else {
-      this.drawBeginPosition.y = this.height - this.padding
-      this.drawEndPosition.y = this.padding
+    switch (this.linkerType) {
+      case 'straight':
+        if ((this.dest.position.x - this.src.position.x) >= 0) {
+          this.drawBeginPosition.x = this.padding
+          this.drawEndPosition.x = this.width - this.padding
+        }
+        else {
+          this.drawBeginPosition.x = this.width - this.padding
+          this.drawEndPosition.x = this.padding
+        }
+        if ((this.dest.position.y - this.src.position.y) >= 0) {
+          this.drawBeginPosition.y = this.padding
+          this.drawEndPosition.y = this.height - this.padding
+        }
+        else {
+          this.drawBeginPosition.y = this.height - this.padding
+          this.drawEndPosition.y = this.padding
+        }
+        break;
+      case 'bezier':
+        let [left, top] = this.calcBezierArea()
+        this.drawBeginPosition.x = this.src.position.x - left + this.padding
+        this.drawBeginPosition.y = this.src.position.y - top + this.padding
+        this.drawEndPosition.x = this.dest.position.x - left + this.padding
+        this.drawEndPosition.y = this.dest.position.y - top + this.padding
+        break;
     }
   }
   calcJudgingBeginEndPoints () {
@@ -179,29 +214,48 @@ class Line {
     }
     return [ x1, y1, x2, y2 ]
   }
-  clearCanvas () {
-    this.canvas.width = this.width
-  }
   calcArrowAngle () {
-    let angle
+    let angle, offsetX, offsetY
     switch (this.linkerType) {
       case 'straight':
-        let offsetX = this.dest.position.x - this.src.position.x
-        let offsetY = this.dest.position.y - this.src.position.y
-        if (offsetY === 0) {
-          angle = (offsetX >= 0) ? Math.PI / 2 : - Math.PI / 2
-        }
-        else if (offsetY < 0) {
-          angle = Math.atan(offsetX / -offsetY)
-        }
-        else {
-          angle = Math.PI - Math.atan(offsetX / offsetY)
-        }
+        offsetX = this.dest.position.x - this.src.position.x
+        offsetY = this.dest.position.y - this.src.position.y
         break;
       case 'bezier':
+        offsetX = this.dest.position.x - this.bezierControlPoints[1].x
+        offsetY = this.dest.position.y - this.bezierControlPoints[1].y
         break;
     }
+    if (offsetY === 0) {
+      angle = (offsetX >= 0) ? Math.PI / 2 : - Math.PI / 2
+    }
+    else if (offsetY < 0) {
+      angle = Math.atan(offsetX / -offsetY)
+    }
+    else {
+      angle = Math.PI - Math.atan(offsetX / offsetY)
+    }
+
     return angle
+  }
+  calcBezierArea () {
+    let top = Infinity, bottom = -Infinity, left = Infinity, right = -Infinity
+    let xs = []
+    xs.push(this.src.position.x, this.dest.position.x
+      , this.bezierControlPoints[0].x, this.bezierControlPoints[1].x)
+    let ys = []
+    ys.push(this.src.position.y, this.dest.position.y
+      , this.bezierControlPoints[0].y, this.bezierControlPoints[1].y)
+
+    for (let i = 0; i < 4; i++) {
+      left = (xs[i] < left) ? xs[i] : left
+      right = (xs[i] > right) ? xs[i] : right
+      top = (ys[i] < top) ? ys[i] : top
+      bottom = (ys[i] > bottom) ? ys[i] : bottom
+    }
+
+    // Return [left, top, width, height].
+    return [left, top, right - left, bottom - top]
   }
   drawArrow (angle, context) {
     context.translate(this.drawEndPosition.x, this.drawEndPosition.y)
@@ -243,11 +297,12 @@ class Line {
         context.stroke()
         break;
       case 'bezier':
+        let [left, top] = this.calcBezierArea()
         context.beginPath()
         context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
-        context.bezierCurveTo(this.bezierControlPoints[0].x, this.bezierControlPoints[0].y,
-          this.bezierControlPoints[1].x, this.bezierControlPoints[1].y,
-          this.drawEndPosition.x, this.drawEndPosition.y)
+        context.bezierCurveTo(this.bezierControlPoints[0].x - left, this.bezierControlPoints[0].y - top
+          , this.bezierControlPoints[1].x - left, this.bezierControlPoints[1].y - top
+          , this.drawEndPosition.x, this.drawEndPosition.y)
         context.stroke()
         context.beginPath()
         break;

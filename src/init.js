@@ -22,6 +22,10 @@ const drawContainerHtml = `<div class="draw-main">
                     <div class="shape-anchor" style="left:6px; top:calc(50% - 4px);"></div>
                 </div>
                 <div id="bezier-controls">
+                    <div class="bezier-control-line" end="src"></div>
+                    <div class="bezier-control-point" end="src"></div>
+                    <div class="bezier-control-line" end="dest"></div>
+                    <div class="bezier-control-point" end="dest"></div>
                 </div>
             </div>
         </div>

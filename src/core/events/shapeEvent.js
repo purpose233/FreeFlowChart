@@ -64,6 +64,11 @@ function shapeEventOnMouseDown (event, shapeList) {
       shape.draw(null, true)
       eventCommon.selectedShape = null
       eventCommon.shapeController.setVisibility(false)
+
+      if (shape.linkerType === 'bezier') {
+        eventCommon.bezierController.resetlinePositions(shape.src.position, shape.dest.position)
+        eventCommon.bezierController.setVisibility(true)
+      }
       break;
     case 'lineDest':
     case 'lineSrc':
@@ -108,6 +113,11 @@ function shapeEventOnMouseDown (event, shapeList) {
           shape.src.shape.deleteLine(shape)
         }
         eventCommon.lineData.type = 'toSrc'
+      }
+
+      if (shape.linkerType === 'bezier') {
+        eventCommon.bezierController.resetlinePositions(shape.src.position, shape.dest.position)
+        eventCommon.bezierController.setVisibility(true)
       }
       break;
     case 'shapeBody':
@@ -161,6 +171,7 @@ function shapeEventOnMouseDown (event, shapeList) {
       }
       eventCommon.selectedShape = null
       eventCommon.shapeController.setVisibility(false)
+      eventCommon.bezierController.setVisibility(false)
   }
 }
 
@@ -309,7 +320,10 @@ function shapeEventOnMouseMove (event, shapeList) {
 function shapeEventOnMouseUp (event, shapeList) {
   if (eventCommon.lineData.isActive) {
     let line = eventCommon.lineData.activeLine
-    if (!line) { return }
+    if (!line) {
+      eventCommon.lineData.isActive = false
+      return
+    }
     switch (eventCommon.lineData.type) {
       case 'new':
         if (eventCommon.lineData.needDeleted) {

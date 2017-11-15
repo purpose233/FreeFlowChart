@@ -45,7 +45,62 @@ let eventCommon = {
       return controllerDraw(this.canvas, width, height, 10)
     }
   },
-  bezierController: {},
+  bezierController: {
+    el: null,
+    // Note that the array is ordered as src, dest.
+    pointElements: null,
+    lineElements: null,
+    controlPositions: [],
+    linePositions: [],
+    visibility: false,
+    init: function () {
+      this.el = document.getElementById('bezier-controls')
+      this.pointElements = [].slice.call(this.el.getElementsByClassName('bezier-control-point'))
+      this.lineElements = [].slice.call(this.el.getElementsByClassName('bezier-control-line'))
+      if (this.pointElements[0].getAttribute('end') !== 'src') {
+        this.pointElements = this.pointElements.reverse()
+      }
+      if (this.lineElements[0].getAttribute('end') !== 'src') {
+        this.lineElements = this.lineElements.reverse()
+      }
+    },
+    reset: function () {
+      if (!this.el) {
+        this.init()
+      }
+
+      this.pointElements[0].style.left = this.controlPositions[0].x + 'px'
+      this.pointElements[0].style.top = this.controlPositions[0].y + 'px'
+      this.pointElements[1].style.left = this.controlPositions[1].x + 'px'
+      this.pointElements[1].style.top = this.controlPositions[1].y + 'px'
+    },
+    resetlinePositions: function (srcPosition, destPosition) {
+      this.linePositions = [srcPosition, destPosition]
+      this.reset()
+    },
+    resetSrcControlPositions: function (position) {
+      this.controlPositions[0] = position
+      this.reset()
+    },
+    resetDestControlPositions: function (position) {
+      this.controlPositions[1] = position
+      this.reset()
+    },
+    setVisibility: function (visibility) {
+      if (!this.el) {
+        this.init()
+      }
+
+      if (visibility) {
+        this.el.style.display = 'block'
+      }
+      else {
+        this.el.style.display = 'none'
+      }
+
+      this.visibility = visibility
+    }
+  },
   styleController: {},
 
   activeShape: null,
