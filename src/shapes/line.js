@@ -1,5 +1,7 @@
-import {lineSetting, drawingDefaultSetting, textDefaultSetting, defaultPadding} from './lineDefaultSetting'
-import {calcPointToPointDistance, calcPointToLineDistance} from "../core/calculation/calcDistance";
+import {lineSetting, drawingDefaultSetting
+  , textDefaultSetting, defaultPadding} from './lineDefaultSetting'
+import {calcPointToPointDistance, calcPointToLineDistance
+  , calcPointToBezier} from "../core/calculation/calcDistance"
 import {calcPointToLineFoot} from "../core/calculation/calcPosition";
 import colors from '../common/colors'
 
@@ -76,17 +78,7 @@ class Line {
   }
   init () {
     if (this.bezierControlPoints.length === 0) {
-      let offsetX = this.dest.position.x - this.src.position.x
-      let offsetY = this.dest.position.y - this.src.position.y
-
-      this.bezierControlPoints.push({
-        x: this.src.position.x + offsetX / 3,
-        y: this.src.position.y + offsetY / 3
-      })
-      this.bezierControlPoints.push({
-        x: this.src.position.x + 2 * offsetX / 3,
-        y: this.src.position.y + 2 * offsetY / 3
-      })
+      this.reCalcBezierControlPoints()
     }
     this.resetCanvas()
   }
@@ -95,10 +87,12 @@ class Line {
   }
   resetSrcPosition (position) {
     this.src.position = position
+    this.reCalcBezierControlPoints()
     this.resetCanvas()
   }
   resetDestPosition (position) {
     this.dest.position = position
+    this.reCalcBezierControlPoints()
     this.resetCanvas()
   }
   resetCanvas () {
@@ -138,11 +132,31 @@ class Line {
   }
   resetSrc (src) {
     this.src = src
+    this.reCalcBezierControlPoints()
     this.resetCanvas()
   }
   resetDest (dest) {
     this.dest = dest
+    this.reCalcBezierControlPoints()
     this.resetCanvas()
+  }
+  resetBezierSrcControl (position) {
+    this.bezierControlPoints[0] = position
+    this.resetCanvas()
+  }
+  resetBezierDestControl (position) {
+    this.bezierControlPoints[1] = position
+    this.resetCanvas()
+  }
+  reCalcBezierControlPoints () {
+    let offsetX = this.dest.position.x - this.src.position.x
+    let offsetY = this.dest.position.y - this.src.position.y
+
+    this.bezierControlPoints = [
+      {x: this.src.position.x + offsetX / 3,
+      y: this.src.position.y + 2 * offsetY / 3}
+      , {x: this.src.position.x + 2 * offsetX / 3,
+      y: this.src.position.y + offsetY / 3}]
   }
   setPosition (x, y) {
     this.left = x
@@ -195,24 +209,8 @@ class Line {
     }
   }
   calcJudgingBeginEndPoints () {
-    let x1, x2, y1, y2
-    if ((this.dest.position.x - this.src.position.x) >= 0) {
-      x1 = this.left + this.padding
-      x2 = this.left + this.width - this.padding
-    }
-    else {
-      x1 = this.left + this.width - this.padding
-      x2 = this.left + this.padding
-    }
-    if ((this.dest.position.y - this.src.position.y) >= 0) {
-      y1 = this.top + this.padding
-      y2 = this.top + this.height - this.padding
-    }
-    else {
-      y1 = this.top + this.height - this.padding
-      y2 = this.top + this.padding
-    }
-    return [ x1, y1, x2, y2 ]
+    return [ this.src.position.x, this.src.position.y
+      , this.dest.position.x, this.dest.position.y ]
   }
   calcArrowAngle () {
     let angle, offsetX, offsetY
@@ -300,8 +298,10 @@ class Line {
         let [left, top] = this.calcBezierArea()
         context.beginPath()
         context.moveTo(this.drawBeginPosition.x, this.drawBeginPosition.y)
-        context.bezierCurveTo(this.bezierControlPoints[0].x - left, this.bezierControlPoints[0].y - top
-          , this.bezierControlPoints[1].x - left, this.bezierControlPoints[1].y - top
+        context.bezierCurveTo(this.bezierControlPoints[0].x - left + this.padding
+          , this.bezierControlPoints[0].y - top + this.padding
+          , this.bezierControlPoints[1].x - left + this.padding
+          , this.bezierControlPoints[1].y - top + this.padding
           , this.drawEndPosition.x, this.drawEndPosition.y)
         context.stroke()
         context.beginPath()
@@ -356,19 +356,21 @@ class Line {
         return false
       }
     }
+    let distance
     let [ x1, y1, x2, y2 ] = this.calcJudgingBeginEndPoints()
     switch  (this.linkerType) {
       case 'straight':
         // Calculate the distance from point to line.
-        let distance = calcPointToLineDistance([x, y], [x1, y1, x2, y2])
+        distance = calcPointToLineDistance([x, y], [x1, y1, x2, y2])
         let foot = calcPointToLineFoot([x, y], [x1, y1, x2, y2])
 
-        return (distance <= lineAreaWidth && distance >= -lineAreaWidth
-          && this.isPointInLineRectangle(foot.x, foot.y))
-
-        break;
+        return (distance <= lineAreaWidth && this.isPointInLineRectangle(foot.x, foot.y))
       case 'bezier':
-        break;
+        distance = calcPointToBezier([x, y]
+          , [x1, y1, this.bezierControlPoints[0].x, this.bezierControlPoints[0].y
+            , this.bezierControlPoints[1].x, this.bezierControlPoints[1].y, x2, y2])
+
+        return distance <= lineAreaWidth
     }
   }
   isInLineEnd (x, y) {

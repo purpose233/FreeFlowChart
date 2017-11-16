@@ -15,6 +15,7 @@ let resizeData = {
   originLeft: 0,
   originTop: 0
 }
+let activeBezierPoint = null
 
 function redrawActiveLine (shape, reference, mark) {
   if (eventCommon.lineData.type === 'toSrc') {
@@ -62,18 +63,18 @@ function shapeEventOnMouseDown (event, shapeList) {
       }
       eventCommon.lineData.selectedLine = shape
       shape.draw(null, true)
-      eventCommon.selectedShape = null
-      eventCommon.shapeController.setVisibility(false)
 
       if (shape.linkerType === 'bezier') {
-        eventCommon.bezierController.resetlinePositions(shape.src.position, shape.dest.position)
+        eventCommon.bezierController.resetPositions(shape.src.position, shape.dest.position
+          , shape.bezierControlPoints[0], shape.bezierControlPoints[1])
         eventCommon.bezierController.setVisibility(true)
       }
+
+      eventCommon.selectedShape = null
+      eventCommon.shapeController.setVisibility(false)
       break;
     case 'lineDest':
     case 'lineSrc':
-      eventCommon.selectedShape = null
-      eventCommon.shapeController.setVisibility(false)
       if (eventCommon.lineData.selectedLine) {
         eventCommon.lineData.selectedLine.draw()
       }
@@ -116,9 +117,13 @@ function shapeEventOnMouseDown (event, shapeList) {
       }
 
       if (shape.linkerType === 'bezier') {
-        eventCommon.bezierController.resetlinePositions(shape.src.position, shape.dest.position)
+        eventCommon.bezierController.resetPositions(shape.src.position, shape.dest.position
+          , shape.bezierControlPoints[0], shape.bezierControlPoints[1])
         eventCommon.bezierController.setVisibility(true)
       }
+
+      eventCommon.selectedShape = null
+      eventCommon.shapeController.setVisibility(false)
       break;
     case 'shapeBody':
       eventCommon.shapeController.reset(shape.left, shape.top, shape.width, shape.height)
@@ -134,6 +139,8 @@ function shapeEventOnMouseDown (event, shapeList) {
         eventCommon.lineData.selectedLine = null
       }
       event.preventDefault()
+
+      eventCommon.bezierController.setVisibility(false)
       break;
     case 'shapeLineArea':
       let lineReference = shape.getLineReference(position.x, position.y)
@@ -152,6 +159,8 @@ function shapeEventOnMouseDown (event, shapeList) {
         eventCommon.lineData.selectedLine.draw()
         eventCommon.lineData.selectedLine = null
       }
+
+      eventCommon.bezierController.setVisibility(false)
       break;
     case 'controller':
       activeDirection = event.target.getAttribute('resizedir')
@@ -161,7 +170,12 @@ function shapeEventOnMouseDown (event, shapeList) {
       resizeData.originHeight = eventCommon.selectedShape.height
       resizeData.originLeft = eventCommon.selectedShape.left
       resizeData.originTop = eventCommon.selectedShape.top
+
+      eventCommon.bezierController.setVisibility(false)
       break;
+    case 'bezierController':
+      activeBezierPoint = shape
+      break
     case 'tool': break;
     case 'empty':
     default:
@@ -176,6 +190,8 @@ function shapeEventOnMouseDown (event, shapeList) {
 }
 
 function shapeEventOnMouseMove (event, shapeList) {
+  let position = calcPositionInCanvas(event.pageX, event.pageY)
+
   if (eventCommon.lineData.isActive) {
     let src, dest
     if (!eventCommon.lineData.activeLine) {
@@ -185,7 +201,7 @@ function shapeEventOnMouseMove (event, shapeList) {
       }
       dest = {
         shape: null,
-        position: calcPositionInCanvas(event.pageX, event.pageY)
+        position: position
       }
 
       eventCommon.lineData.activeLine = createNewLine(src, dest)
@@ -195,39 +211,45 @@ function shapeEventOnMouseMove (event, shapeList) {
     }
     else {
       eventCommon.lineData.needDeleted = false
-      let position = calcPositionInCanvas(event.pageX, event.pageY)
       let judgeResult = eventCommon.judgeEventAt(event, shapeList)
       if (!judgeResult) {
         redrawActiveLine(null, {position: position})
-        return
+      }
+      else {
+        let shape = judgeResult.shape
+        switch (judgeResult.type) {
+          case 'shapeBody':
+          case 'shapeLineArea':
+            let fromShapeId
+            if (eventCommon.lineData.type === 'toSrc') {
+              fromShapeId = (eventCommon.lineData.dest.shape) ? eventCommon.lineData.dest.shape.id : null
+            }
+            else {
+              fromShapeId = (eventCommon.lineData.src.shape) ? eventCommon.lineData.src.shape.id : null
+            }
+            if (fromShapeId === shape.id) {
+              eventCommon.lineData.needDeleted = true
+              redrawActiveLine(null, {position: position})
+            }
+            else {
+              let reference = shape.getLineReference(position.x, position.y)
+              if (!reference) {
+                break;
+              }
+              let mark = (eventCommon.lineData.type === 'toSrc') ? 'src' : 'dest'
+              redrawActiveLine(shape, reference, mark)
+            }
+            break;
+          default:
+            redrawActiveLine(null, {position: position})
+        }
       }
 
-      let shape = judgeResult.shape
-      switch (judgeResult.type) {
-        case 'shapeBody':
-        case 'shapeLineArea':
-          let fromShapeId
-          if (eventCommon.lineData.type === 'toSrc') {
-            fromShapeId = (eventCommon.lineData.dest.shape) ? eventCommon.lineData.dest.shape.id : null
-          }
-          else {
-            fromShapeId = (eventCommon.lineData.src.shape) ? eventCommon.lineData.src.shape.id : null
-          }
-          if (fromShapeId === shape.id) {
-            eventCommon.lineData.needDeleted = true
-            redrawActiveLine(null, {position: position})
-          }
-          else {
-            let reference = shape.getLineReference(position.x, position.y)
-            if (!reference) {
-              return
-            }
-            let mark = (eventCommon.lineData.type === 'toSrc') ? 'src' : 'dest'
-            redrawActiveLine(shape, reference, mark)
-          }
-          break;
-        default:
-          redrawActiveLine(null, {position: position})
+      let line = eventCommon.lineData.activeLine
+      if (line.linkerType === 'bezier') {
+        eventCommon.bezierController.resetPositions(line.src.position, line.dest.position
+          , line.bezierControlPoints[0], line.bezierControlPoints[1])
+        eventCommon.bezierController.setVisibility(true)
       }
     }
   }
@@ -284,6 +306,18 @@ function shapeEventOnMouseMove (event, shapeList) {
     eventCommon.selectedShape.resetLinesPosition()
     eventCommon.shapeController.draw(width, height)
   }
+  else if (activeBezierPoint) {
+    let endType = activeBezierPoint.getAttribute('end')
+    if (endType === 'src') {
+      eventCommon.bezierController.resetSrcControlPositions(position)
+      eventCommon.lineData.selectedLine.resetBezierSrcControl(position)
+    }
+    else {
+      eventCommon.bezierController.resetDestControlPositions(position)
+      eventCommon.lineData.selectedLine.resetBezierDestControl(position)
+    }
+    eventCommon.lineData.selectedLine.draw(null, true)
+  }
   else if (eventCommon.activeShape) {
     let x = event.pageX - clickOffset.x
     let y = event.pageY - clickOffset.y
@@ -318,6 +352,10 @@ function shapeEventOnMouseMove (event, shapeList) {
 }
 
 function shapeEventOnMouseUp (event, shapeList) {
+  if (!eventCommon.lineData.selectedLine) {
+    eventCommon.bezierController.setVisibility(false)
+  }
+
   if (eventCommon.lineData.isActive) {
     let line = eventCommon.lineData.activeLine
     if (!line) {
@@ -360,6 +398,9 @@ function shapeEventOnMouseUp (event, shapeList) {
   }
   else if (activeDirection) {
     activeDirection = null
+  }
+  else if (activeBezierPoint) {
+    activeBezierPoint = null
   }
 }
 

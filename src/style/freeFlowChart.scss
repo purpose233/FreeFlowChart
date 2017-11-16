@@ -151,6 +151,7 @@
         }
         #bezier-controls {
           .bezier-control-point {
+            @include borderRadius(4px);
             position: absolute;
             width: 6px;
             height: 6px;

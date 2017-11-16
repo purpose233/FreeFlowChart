@@ -1,3 +1,4 @@
+import {calcPointToPointDistance} from '../calculation/calcDistance'
 import {calcPositionInCanvas} from '../calculation/calcPosition'
 import controllerDraw from '../../draw/controller'
 import {tools} from '../../toolbar/toolbarDefaultSetting'
@@ -50,8 +51,8 @@ let eventCommon = {
     // Note that the array is ordered as src, dest.
     pointElements: null,
     lineElements: null,
+    endPositions: [],
     controlPositions: [],
-    linePositions: [],
     visibility: false,
     init: function () {
       this.el = document.getElementById('bezier-controls')
@@ -69,13 +70,38 @@ let eventCommon = {
         this.init()
       }
 
-      this.pointElements[0].style.left = this.controlPositions[0].x + 'px'
-      this.pointElements[0].style.top = this.controlPositions[0].y + 'px'
-      this.pointElements[1].style.left = this.controlPositions[1].x + 'px'
-      this.pointElements[1].style.top = this.controlPositions[1].y + 'px'
+      let linePosition = [], lineAngle = [], lineHeight = []
+      linePosition[0] = {
+        x: (this.endPositions[0].x + this.controlPositions[0].x) / 2,
+        y: (this.endPositions[0].y + this.controlPositions[0].y) / 2
+      }
+      linePosition[1] = {
+        x: (this.endPositions[1].x + this.controlPositions[1].x) / 2,
+        y: (this.endPositions[1].y + this.controlPositions[1].y) / 2
+      }
+      lineHeight[0] = calcPointToPointDistance(this.endPositions[0], this.controlPositions[0])
+      lineHeight[1] = calcPointToPointDistance(this.endPositions[1], this.controlPositions[1])
+      lineAngle[0] = -Math.atan((this.endPositions[0].x - this.controlPositions[0].x)
+        / (this.endPositions[0].y - this.controlPositions[0].y)) / Math.PI * 180
+      lineAngle[1] = -Math.atan((this.endPositions[1].x - this.controlPositions[1].x)
+        / (this.endPositions[1].y - this.controlPositions[1].y)) / Math.PI * 180
+
+      this.pointElements[0].style.left = this.controlPositions[0].x - 4 + 'px'
+      this.pointElements[0].style.top = this.controlPositions[0].y - 4 + 'px'
+      this.pointElements[1].style.left = this.controlPositions[1].x - 4 + 'px'
+      this.pointElements[1].style.top = this.controlPositions[1].y - 4 + 'px'
+      this.lineElements[0].style.left = linePosition[0].x - 0.5 + 'px'
+      this.lineElements[0].style.top = linePosition[0].y - 0.5 - lineHeight[0] / 2 + 'px'
+      this.lineElements[1].style.left = linePosition[1].x - 0.5 + 'px'
+      this.lineElements[1].style.top = linePosition[1].y - 0.5 - lineHeight[1] / 2 + 'px'
+      this.lineElements[0].style.height = lineHeight[0] + 'px'
+      this.lineElements[1].style.height = lineHeight[1] + 'px'
+      this.lineElements[0].style.transform = `rotate(${lineAngle[0]}deg)`
+      this.lineElements[1].style.transform = `rotate(${lineAngle[1]}deg)`
     },
-    resetlinePositions: function (srcPosition, destPosition) {
-      this.linePositions = [srcPosition, destPosition]
+    resetPositions: function (srcPosition, destPosition, controlAPosition, controlBPosition) {
+      this.endPositions = [srcPosition, destPosition]
+      this.controlPositions = [controlAPosition, controlBPosition]
       this.reset()
     },
     resetSrcControlPositions: function (position) {
@@ -221,6 +247,12 @@ let eventCommon = {
       || el.classList.contains('selected')) {
       return { shape: null, type: 'tool' }
     }
+    else if (el.classList.contains('bezier-control-point')) {
+      return {
+        shape: el,
+        type: 'bezierController'
+      }
+    }
     else if (el.classList.contains('shape-controller')) {
       return {
         shape: this.selectedShape,
@@ -228,7 +260,8 @@ let eventCommon = {
       }
     }
     else if (el.parentNode.getAttribute
-      && el.parentNode.getAttribute('id') === 'shape-controls') {
+      && el.parentNode.getAttribute('id') === 'shape-controls'
+      || el.classList.contains('bezier-control-line')) {
       // For now, the selected shape has no priority
       // which is the same as processon's work.
       result = this.judgeInShapeList(position, shapeList, -1)
