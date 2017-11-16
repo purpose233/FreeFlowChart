@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html, body{
+        }
+    </style>
+</head>
+<body>
+<canvas id="my-canvas" width="800" height="600"></canvas>
+<script>
+  function generalizeAngle (angle) {
+    while (angle < 0 || angle >= 2 * Math.PI) {
+      angle = (angle < 0) ? angle + 2 * Math.PI : angle
+      angle = (angle >= 2 * Math.PI) ? angle - 2 * Math.PI : angle
+    }
+    return angle
+  }
+  function calcPointOnEllipse (x, y, a, b, angle, counterclockwise) {
+    if (counterclockwise) {
+      return [a * Math.cos(angle) + x, b * Math.sin(angle) + y]
+    }
+    else {
+      return [a * Math.cos(angle) + x, - b * Math.sin(angle) + y]
+    }
+  }
+  // The angle of quadrant for counterclockwise === false and true.
+  // Quadrant 1: 1.5 * PI - 2   * PI, 0   * PI - 0.5 * PI
+  // Quadrant 2: 1   * PI - 1.5 * PI, 0.5 * PI - 1   * PI
+  // Quadrant 3: 0.5 * PI - 1   * PI, 1   * PI - 1.5 * PI
+  // Quadrant 4: 0   * PI - 0.5 * PI, 1.5 * PI - 2   * PI
+  // The angle here must be generalized.
+  function judgeAngleInQuadrant (angle, counterclockwise) {
+    if (counterclockwise) {
+      if (0 <= angle && angle < 0.5 * Math.PI) {
+        return 1
+      }
+      else if (0.5 * Math.PI <= angle && angle < Math.PI) {
+        return 2
+      }
+      else if (Math.PI <= angle && angle < 1.5 * Math.PI) {
+        return 3
+      }
+      else if (1.5 * Math.PI <= angle && angle < 2 * Math.PI) {
+        return 4
+      }
+    }
+    else {
+      if (1.5 * Math.PI <= angle && angle < 2 * Math.PI) {
+        return 1
+      }
+      else if (Math.PI <= angle && angle < 1.5 * Math.PI) {
+        return 2
+      }
+      else if (0.5 * Math.PI <= angle && angle < Math.PI) {
+        return 3
+      }
+      else if (0 <= angle && angle < 0.5 * Math.PI) {
+        return 4
+      }
+    }
+    return null
+  }
+  const k = 0.5522848
+  function getControlPointsOfQuadrant (quadrant, x, y, a, b, counterclockwise) {
+    // Horizontal control point offset.
+    let ox = a * k
+    // Vertical control point offset.
+    let oy = b * k
+    switch (quadrant) {
+      case 1:
+        if (!counterclockwise) { return [x - a, y - oy, x - ox, y - b] }
+        else { return [x - ox, y - b, x - a, y - oy] }
+      case 2:
+        if (!counterclockwise) { return [x + ox, y - b, x + a, y - oy] }
+        else { return [x + a, y - oy, x + ox, y - b] }
+      case 3:
+        if (!counterclockwise) { return [x + a, y + oy, x + ox, y + b] }
+        else { return [x + ox, y + b, x + a, y + oy] }
+      case 4:
+        if (!counterclockwise) { return [x - ox, y + b, x - a, y + oy] }
+        else { return [x - a, y + oy, x - ox, y + b] }
+    }
+  }
+  function getEndPointOfQuadrant (quadrant, x, y, a, b, counterclockwise) {
+    switch (quadrant) {
+      case 1:
+        if (!counterclockwise) { return [x + a, y] }
+        else { return [x, y + b] }
+      case 2:
+        if (!counterclockwise) { return [x, y + b] }
+        else { return [x - a, y] }
+      case 3:
+        if (!counterclockwise) { return [x - a, y] }
+        else { return [x, y - b] }
+      case 4:
+        if (!counterclockwise) { return [x, y - b] }
+        else { return [x + a, y] }
+    }
+  }
+  function ellipseTo (context, x, y, a, b, sAngle, eAngle, counterclockwise) {
+    if (typeof sAngle === 'undefined') {
+      sAngle = 0
+    }
+    if (typeof eAngle === 'undefined') {
+      eAngle = 2 * Math.PI
+    }
+    sAngle = generalizeAngle(sAngle)
+    eAngle = generalizeAngle(eAngle)
+
+    let quadrantS = judgeAngleInQuadrant(sAngle)
+    let quadrantE = judgeAngleInQuadrant(eAngle)
+    let [sx, sy] = calcPointOnEllipse(x, y, a, b, sAngle, counterclockwise)
+    let [ex, ey] = calcPointOnEllipse(x, y, a, b, eAngle, counterclockwise)
+    let needContinue = false, currQuadrant = quadrantS
+    let cx1, cy1, cx2, cy2, drawEndX, drawEndY
+
+    context.moveTo(sx, sy);
+    if (sAngle === eAngle) {
+      return
+    }
+
+    if (sAngle >= eAngle) {
+      needContinue = true
+    }
+    do {
+      [cx1, cy1, cx2, cy2] = getControlPointsOfQuadrant(currQuadrant, x, y, a, b, counterclockwise)
+      if (currQuadrant === quadrantE && !needContinue) {
+        drawEndX = ex
+        drawEndY = ey
+      }
+      else {
+        [drawEndX, drawEndY] = getEndPointOfQuadrant(currQuadrant, x, y, a, b, counterclockwise)
+      }
+      context.bezierCurveTo(cx1, cy1, cx2, cy2, drawEndX, drawEndY)
+      needContinue = false
+    } while (currQuadrant === quadrantE || !needContinue)
+
+    /*
+    context.moveTo(x - a, y);
+    context.bezierCurveTo(x - a, y - oy, x - ox, y - b, x, y - b);
+    context.bezierCurveTo(x + ox, y - b, x + a, y - oy, x + a, y);
+    context.bezierCurveTo(x + a, y + oy, x + ox, y + b, x, y + b);
+    context.bezierCurveTo(x - ox, y + b, x - a, y + oy, x - a, y);*/
+  }
+  let canvas = document.getElementById('my-canvas')
+  let context = canvas.getContext('2d')
+  context.lineWidth = 2
+  context.beginPath()
+  ellipseTo(context, 100, 100, 50, 30)
+  context.stroke()
+
+    /*
+  let canvas = document.getElementById('my-canvas')
+  let context = canvas.getContext('2d')
+
+  context.beginPath()
+  context.translate(10, 10)
+  context.arc(0,0,3,0,2*Math.PI)
+  context.stroke()
+  context.beginPath()
+  context.arc(1,1,3,0,2*Math.PI)
+  context.stroke()
+*/
+  /*
+function calcQuarticEquation (a, b, c, d, e) {
+  let result = []
+  let t1 = c*c-3*b*d+12*a*e
+  let t2 = 2*c*c*c-9*b*c*d+27*a*d*d+27*b*b*e-72*a*c*e
+
+  let temp = Math.pow(t2+Math.sqrt(-4*t1*t1*t1+t2*t2),1/3)
+  let P = Math.pow(2,1/3)*t1/(3*a*temp)+temp/(3*Math.pow(2,1/3)*a)
+
+  let Q = 0.5*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P)
+  if (isNaN(Q)) { return [] }
+  let R = b*b/(2*a*a)-4*c/(3*a)-P
+  let S = (-b*b*b/(a*a*a)+4*b*c/(a*a)-8*d/a)/(4*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P))
+  let T1 = 0.5*Math.sqrt(R-S)
+  let T2 = 0.5*Math.sqrt(R+S)
+  if (!isNaN(T1)) {
+    result.push(-b/(4*a)-Q-T1)
+    result.push(-b/(4*a)-Q+T1)
+  }
+  if (!isNaN(T2)) {
+    result.push(-b/(4*a)+Q-T2)
+    result.push(-b/(4*a)+Q+T2)
+  }
+  return result
+}
+function generalizePoint (point) {
+  if (Array.isArray(point)) {
+    return point
+  }
+  else {
+    return [point.x, point.y]
+  }
+}
+function generalizeEllipse (ellipse) {
+  if (Array.isArray(ellipse)) {
+    return ellipse
+  }
+  else {
+    return [ellipse.a, ellipse.b, ellipse.m, ellipse.n]
+  }
+}
+
+function calcYofEllipse(x, ellipse) {
+  let [a, b, m, n] = generalizeEllipse(ellipse)
+  if (!!m) { x -= m }
+  if (x < -a || x > a) { return null }
+
+  let y = b*Math.sqrt(1-x*x/(a*a))
+  return [y + n, -y + n]
+}
+function calcPointToEllipseClosestPoint (point, ellipse) {
+  let [x0, y0] = generalizePoint(point)
+  let [a, b, m, n] = generalizeEllipse(ellipse)
+
+  // Set the ellipse at origin point.
+  if (!!m) { x0 -= m }
+  if (!!n) { y0 -= n }
+
+  // Note that c presents c * c.
+  let c = a*a - b*b
+
+  let A = c*c
+  let B = -2*x0*a*a*c
+  let C = (y0*a*b)*(y0*a*b)+x0*x0*a*a*a*a-a*a*c*c
+  let D = 2*x0*a*a*a*a*c
+  let E = -a*a*a*a*a*a*x0*x0
+
+  if (A !== 0) {
+    B /= A, C /= A, D /= A, E /= A, A = 1
+  }
+
+  let result = calcQuarticEquation(A, B, C, D, E)
+  let possiblePoint = []
+  if (result.length > 0) {
+    for (let i = 0; i < result.length; i++) {
+      let ys = calcYofEllipse(result[i], [a, b, 0, 0])
+      if (ys) {
+        possiblePoint.push({x:result[i], y:ys[0]})
+        possiblePoint.push({x:result[i], y:ys[1]})
+      }
+    }
+  }
+
+  let bestPoint = null, shortestDistance = Infinity, tempDistance
+  for (let i = 0; i < possiblePoint.length; i++) {
+    tempDistance = (possiblePoint[i].x-x0)*(possiblePoint[i].x-x0)+(possiblePoint[i].y-y0)*(possiblePoint[i].y-y0)
+    if (tempDistance < shortestDistance) {
+      bestPoint = possiblePoint[i]
+      shortestDistance = tempDistance
+    }
+  }
+  // Only the point returned is the real point,
+  // all others are points after moved.
+  return bestPoint ? {
+    x: bestPoint.x + m,
+    y: bestPoint.y + n
+  } : null
+}
+
+function drawPoint (context, point, radius) {
+  point = generalizePoint(point)
+  context.beginPath()
+  context.arc(point[0],point[1], radius, 0, 2*Math.PI)
+  context.stroke()
+}
+
+let canvas = document.getElementById('my-canvas')
+let context = canvas.getContext('2d')
+
+let point = [150, 150]
+let ellipse = [30, 50, 100, 100]
+drawPoint(context, point, 2)
+drawPoint(context, ellipse.slice(2, 4), 2)
+context.beginPath()
+context.scale(ellipse[0] / ellipse[1], 1)
+context.arc(ellipse[2] / (ellipse[0] / ellipse[1]), ellipse[3], ellipse[1], 0, Math.PI * 2)
+context.stroke()
+context.scale(ellipse[1] / ellipse[0], 1)
+let bestPoint = calcPointToEllipseClosestPoint(point, ellipse)
+if (bestPoint) {
+  drawPoint(context, [100, 100], 2)
+  drawPoint(context, bestPoint, 2)
+}*/
+  /*
+  // Quartic Equation test
+  function calcQuarticEquation (a, b, c, d, e) {
+    let result = []
+    let t1 = c*c-3*b*d+12*a*e
+    let t2 = 2*c*c*c-9*b*c*d+27*a*d*d+27*b*b*e-72*a*c*e
+
+    let temp = Math.pow(t2+Math.sqrt(-4*t1*t1*t1+t2*t2),1/3)
+    let P = Math.pow(2,1/3)*t1/(3*a*temp)+temp/(3*Math.pow(2,1/3)*a)
+
+    let Q = 0.5*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P)
+    if (isNaN(Q)) { return [] }
+    let R = b*b/(2*a*a)-4*c/(3*a)-P
+    let S = (-b*b*b/(a*a*a)+4*b*c/(a*a)-8*d/a)/(4*Math.sqrt(b*b/(4*a*a)-2*c/(3*a)+P))
+    let T1 = 0.5*Math.sqrt(R-S)
+    let T2 = 0.5*Math.sqrt(R+S)
+    if (!isNaN(T1)) {
+      result.push(-b/(4*a)-Q-T1)
+      result.push(-b/(4*a)-Q+T1)
+    }
+    if (!isNaN(T2)) {
+      result.push(-b/(4*a)+Q-T2)
+      result.push(-b/(4*a)+Q+T2)
+    }
+    return result
+  }
+
+  function calcY (x, a, b, c, d, e) {
+    return a*x*x*x*x + b*x*x*x + c*x*x + d*x + e
+  }
+  let canvas = document.getElementById('my-canvas')
+  let context = canvas.getContext('2d')
+
+  // y = a*x^4 + b*x^3 + c*x^2 + d*x + e
+  let xList = [], yList = []
+  let radio = 100, maxX = 5, count = 1000
+  let a = 1, b = - 5, c = 3, d = -4, e = 100
+  for (let i = 0; i <= count; i++) {
+    let t = i * (maxX / count)
+    xList[i] = t * radio
+    yList[i] = calcY(t, a, b, c, d, e)
+  }
+  context.beginPath()
+  context.moveTo(xList[0], yList[0])
+  //context.arc(xList[0], yList[0], 1, 0, 2*Math.PI)
+  for (let i = 1; i <= count; i++) {
+    context.lineTo(xList[i], yList[i])
+    //context.arc(xList[i], yList[i], 1, 0, 2*Math.PI)
+  }
+  context.stroke()
+  context.beginPath()
+  context.moveTo(0, 100)
+  context.lineTo(800, 100)
+  context.stroke()
+
+  //let e1 =
+  let result = calcQuarticEquation(a, b, c, d, 0)
+  for (let i = 0; i < result.length; i++) {
+    context.beginPath()
+    context.moveTo(result[i] * radio, 0)
+    context.lineTo(result[i] * radio, 600)
+    context.stroke()
+  }
+  */
+
+  /*
+    // bezier test
+    function generalizePoint (point) {
+      if (Array.isArray(point)) {
+        return point
+      }
+      else {
+        return [point.x, point.y]
+      }
+    }
+    function generalizeBezier (bezier) {
+      if (Array.isArray(bezier)) {
+        return bezier
+      }
+      else {
+        return [bezier.x1, bezier.y1, bezier.x2, bezier.y2
+          , bezier.x3, bezier.y3, bezier.x4, bezier.y4]
+      }
+    }
+    function calcBezierArea (bezier) {
+      let [x1,y1,x2,y2,x3,y3,x4,y4] = generalizeBezier(bezier)
+      let top = Infinity, bottom = -Infinity, left = Infinity, right = -Infinity
+      let xs = []
+      xs.push(x1, x2, x3, x4)
+      let ys = []
+      ys.push(y1, y2, y3, y4)
+
+      for (let i = 0; i < 4; i++) {
+        left = (xs[i] < left) ? xs[i] : left
+        right = (xs[i] > right) ? xs[i] : right
+        top = (ys[i] < top) ? ys[i] : top
+        bottom = (ys[i] > bottom) ? ys[i] : bottom
+      }
+
+      // Return [left, top, width, height].
+      return [right - left, bottom - top]
+    }
+    const bezierTravelDelta = 1
+    function calcPointToBezier (point, bezier) {
+      let [x0, y0] = generalizePoint(point)
+      let [x1,y1,x2,y2,x3,y3,x4,y4] = generalizeBezier(bezier)
+      let [width, height] = calcBezierArea(bezier)
+
+      let xList = [], yList = []
+      let count = Math.floor(Math.sqrt(width * width + height * height) / bezierTravelDelta)
+      count = count < 10 ? 10 : count
+      let minDistance = Infinity
+      console.log(count)
+      for (let i = 0; i <= count; i++) {
+        let t = i * (1 / count)
+        xList[i] = x1*Math.pow(1-t,3) + 3*x2*t*(1-t)*(1-t) + 3*x3*t*t*(1-t)+x4*t*t*t
+        yList[i] = y1*Math.pow(1-t,3) + 3*y2*t*(1-t)*(1-t) + 3*y3*t*t*(1-t)+y4*t*t*t
+      }
+
+      let bestX, bestY
+
+      for (let i = 1; i <= count; i++) {
+        let tempDistance = (x0 - xList[i]) * (x0 - xList[i]) + (y0 - yList[i]) * (y0 - yList[i])
+
+        if (tempDistance < minDistance) {
+          bestX = xList[i]
+          bestY = yList[i]
+        }
+
+        minDistance = tempDistance < minDistance ? tempDistance : minDistance
+      }
+
+      drawPoint(context, {x:bestX, y:bestY}, 2)
+
+      return Math.sqrt(minDistance)
+    }
+
+    let canvas = document.getElementById('my-canvas')
+    let context = canvas.getContext('2d')
+    let beginPoint = {x:40, y:40}, endPoint = {x:400, y:60}
+    let controlPointA = {x:30, y:150}, controlPointB = {x:600, y:400}
+    let myPoint = {x:200, y:200}
+
+    function drawPoint (context, point, radius) {
+      context.beginPath()
+      context.arc(point.x,point.y, radius, 0, 2*Math.PI)
+      context.stroke()
+    }
+    drawPoint(context, myPoint, 2)
+
+    context.beginPath()
+    context.moveTo(beginPoint.x, beginPoint.y)
+    context.bezierCurveTo(controlPointA.x,controlPointA.y,
+      controlPointB.x,controlPointB.y,endPoint.x,endPoint.y)
+    context.stroke()
+
+    context.beginPath()
+    context.moveTo(beginPoint.x, beginPoint.y)
+    context.lineTo(controlPointA.x,controlPointA.y)
+    context.arc(controlPointA.x,controlPointA.y, 5, 0, 2*Math.PI)
+    context.stroke()
+
+    context.beginPath()
+    context.moveTo(endPoint.x, endPoint.y)
+    context.lineTo(controlPointB.x,controlPointB.y)
+    context.arc(controlPointB.x,controlPointB.y, 5, 0, 2*Math.PI)
+    context.stroke()
+
+    calcPointToBezier(myPoint, [beginPoint.x, beginPoint.y, controlPointA.x,controlPointA.y,
+      controlPointB.x,controlPointB.y,endPoint.x,endPoint.y])
+*/
+    /*
+    let xList = [], yList = []
+    let count = 100
+    for (let i = 0; i <= count; i++) {
+      let t = i * (1 / count)
+      xList[i] = beginPoint.x*Math.pow(1-t,3) + 3*controlPointA.x*t*(1-t)*(1-t) + 3*controlPointB.x*t*t*(1-t)+endPoint.x*t*t*t
+      yList[i] = beginPoint.y*Math.pow(1-t,3) + 3*controlPointA.y*t*(1-t)*(1-t) + 3*controlPointB.y*t*t*(1-t)+endPoint.y*t*t*t
+    }
+    context.beginPath()
+    context.moveTo(xList[0], yList[0])
+    context.arc(xList[0], yList[0], 1, 0, 2*Math.PI)
+    for (let i = 1; i <= count; i++) {
+      context.lineTo(xList[i], yList[i])
+      context.arc(xList[i], yList[i], 1, 0, 2*Math.PI)
+    }
+    context.stroke()
+    */
+    /*
+    // X(t) = Ax*t^3 + Bx*t^2 + Cx*t + Dx
+    // Y(t) = Ay*t^3 + By*t^2 + Cy*t + Dy
+    let Ax = beginPoint.x*-1 + 3*controlPointA.x    + 3*controlPointB.x*-1 + endPoint.x
+    let Bx = beginPoint.x*3  + 3*controlPointA.x*-2 + 3*controlPointB.x
+    let Cx = beginPoint.x*-3 + 3*controlPointA.x
+    let Dx = beginPoint.x
+    let Ay = beginPoint.y*-1 + 3*controlPointA.y    + 3*controlPointB.y*-1 + endPoint.y
+    let By = beginPoint.y*3  + 3*controlPointA.y*-2 + 3*controlPointB.y
+    let Cy = beginPoint.y*-3 + 3*controlPointA.y
+    let Dy = beginPoint.y
+
+    let K1, K2, t, count = 5000, delta = 0.1
+    for (let i = 0; i <= count; i++) {
+      t = i * (1 / count)
+      let Xt = Ax*t*t*t + Bx*t*t + Cx*t + Dx
+      let Yt = Ay*t*t*t + By*t*t + Cy*t + Dy
+      K1 = (3*Ay*t*t+2*By*t+Cy) / (3*Ax*t*t+2*Bx*t+Cx)
+      K2 = (myPoint.y-Yt) / (myPoint.x-Xt)
+      if (K1 * K2 <= -1 + delta && K1 * K2 >= -1 - delta) {
+        drawPoint(context, {x:Xt, y:Yt}, 2)
+      }
+    }*/
+
+</script>
+</body>
+</html>

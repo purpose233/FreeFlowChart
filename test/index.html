@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="draw-tools"></div>
+<div id="draw-main"></div>
+
+<button id="test">test</button>
+<div id="test-div"></div>
+
+<!--<canvas id="bezier-test"-->
+        <!--style="position: absolute;left: 0;top: 0;-->
+        <!--width: 1000px;height: 1000px; z-index:1">-->
+<!--</canvas>-->
+
+<script src="../dist/FreeFlowChart.js"></script>
+<script>
+    let flowChart = FreeFlowChart({
+      el: '#draw-main',
+      toolbar: {
+        el: '#draw-tools'
+      }
+    })
+
+    document.getElementById('test').onclick = () => {
+      let image = flowChart.generateImage()
+      document.getElementById('test-div').appendChild(image)
+    }
+</script>
+</body>
+</html>
