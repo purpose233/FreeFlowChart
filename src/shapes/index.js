@@ -9,7 +9,7 @@ function getShapeByType (shapeName) {
     case 'process': return Process
     case 'decision': return Decision
     case 'terminator': return Terminator
-    case 'storeData': return StoredData
+    case 'storedData': return StoredData
     case 'line': return Line
   }
 }

@@ -1,4 +1,5 @@
 import Shape from './shape'
+import ellipseTo from '../draw/ellipse'
 
 const defaultWidthHeightRatio = 0.6
 const lineAreaWidth = 7
@@ -54,10 +55,6 @@ class Terminator extends Shape {
   constructor (el, type, left, top, width, height) {
     super(el, type, left, top, width, height)
   }
-  // And a problem still exists: currently, I use function scale and arc to
-  // draw the ellipse, and it works fine for most time. But when the scale radio
-  // is way to big, it will cause the line of ellipse being too thin.
-  // Maybe I can try using bezier instead of arc.
   draw (paddingHorizontal, paddingVertical, drawContext) {
     let horizontal = (typeof paddingHorizontal === 'undefined' || paddingHorizontal === null)
       ? this.padding : paddingHorizontal
@@ -66,9 +63,28 @@ class Terminator extends Shape {
     let context = (typeof drawContext === 'undefined' || drawContext === null )
       ? this.context : drawContext
 
+    // Use bezier curvy to fit ellipse instead of scaling.
+    let b = (this.height - 2 * vertical) / 2
+    let a = b * this.calcWidthHeightRatio()
+    let centerA = {}, centerB = {}
+    centerA.x = horizontal + a
+    centerA.y = vertical + b
+    centerB.x = this.width - horizontal - a
+    centerB.y = vertical + b
+
+    this.setDrawStyle(context)
+    context.beginPath()
+    ellipseTo(context, centerA.x, centerA.y, a, b, 0.5 * Math.PI, 1.5 * Math.PI)
+    context.lineTo(centerB.x, vertical)
+    ellipseTo(context, centerB.x, centerB.y, a, b, 1.5 * Math.PI, 0.5 * Math.PI)
+    context.lineTo(centerA.x, this.height - vertical)
+    context.fill()
+    context.stroke()
+
+    /*
     let radius = (this.height - 2 * vertical) / 2
     let radio = this.calcWidthHeightRatio()
-    let centerA = [], centerB = []
+    let centerA = {}, centerB = {}
     centerA.x = horizontal / radio + radius
     centerA.y = vertical + radius
     centerB.x = (this.width - horizontal) / radio - radius
@@ -83,7 +99,7 @@ class Terminator extends Shape {
     context.closePath()
     context.fill()
     context.stroke()
-    context.scale(1 / this.calcWidthHeightRatio(), 1)
+    context.scale(1 / this.calcWidthHeightRatio(), 1)*/
   }
   drawOnOtherCanvas (context, left, top) {
     context.translate(left, top)

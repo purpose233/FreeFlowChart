@@ -49,7 +49,7 @@ function createComponets (el, shapes) {
   let componentItems = document.getElementsByClassName('component-box')
   for (let i = 0; i < shapes.length; i++) {
     let shapeName = shapes[i]
-    let shape = new (getShapeByType(shapeName))(componentItems[i], 'process', -1, -1, 30, 30)
+    let shape = new (getShapeByType(shapeName))(componentItems[i], shapes[i], -1, -1, 30, 30)
     shape.draw(2, 5)
   }
 }

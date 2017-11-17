@@ -14,7 +14,7 @@ import _ from './common/util'
   // }
   const defaultInstanceSettings = {
     el: null,
-    shapes: ['process', 'decision', 'terminator', 'storeData'],
+    shapes: ['process', 'decision', 'terminator', 'storedData'],
     toolbar: {
       el: null,
       tools: ['undo', 'redo',

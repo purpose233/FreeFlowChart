@@ -20,7 +20,7 @@ let terminator = {
   shapeName: '开始/结束'
 }
 let storedData = {
-  width: 120,
+  width: 150,
   height: 90,
   shapeName: '数据库'
 }
