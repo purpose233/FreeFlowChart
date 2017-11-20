@@ -29,6 +29,10 @@ class Shape {
 
     this.drawStyle = drawStyle ? drawStyle : _.clone(drawingDefaultSetting)
     this.textStyle = textStyle ? textStyle : _.clone(textDefaultSetting)
+
+    // Although the padding is a member variable of shape,
+    // it cannot be reset. The only reason why it is a member variable
+    // is that it need to be used in child class.
     this.padding = defaultPadding
 
     this.relativeLines = []

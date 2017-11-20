@@ -359,7 +359,6 @@ function shapeEventOnMouseUp (event, shapeList) {
     eventCommon.bezierController.setVisibility(true)
   }
 
-
   if (eventCommon.lineData.isActive) {
     let line = eventCommon.lineData.activeLine
     if (!line) {
