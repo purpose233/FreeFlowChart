@@ -26,15 +26,19 @@ function dragNewComponetMouseMove (event, shapeList) {
   }
 }
 
+function isWithinCanvas (x, y) {
+  let uiInfo = getUIParameters()
+  return (x >= uiInfo.canvasLeft && x <= uiInfo.canvasRight
+    && y >= uiInfo.canvasTop && y <= uiInfo.canvasBottom)
+}
+
 function dragNewComponetMouseUp (event, shapeList) {
   mouseDown = false
 
-  if (currentShape && event.pageX <= getUIParameters().canvasLeft) {
+  if (currentShape && !(isWithinCanvas(event.pageX, event.pageY))) {
     currentShape.remove()
   }
   else if (currentShape) {
-    //let left = (event.pageX - currentShape.width / 2 - toolbarWidth) - (padding - drawLayout.scrollLeft)
-    //let top = (event.pageY - currentShape.height / 2 - headerHeight) - (padding - drawLayout.scrollTop)
     let position = calcPositionInCanvas(event.pageX, event.pageY)
     let left = position.x - currentShape.width / 2
     let top = position.y - currentShape.height / 2

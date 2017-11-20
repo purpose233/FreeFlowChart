@@ -12,7 +12,7 @@ function generalizeLine (line) {
     case 4:
       let [x1, y1, x2, y2] = line
       let A, B, C
-      if (x1 - x2 <= minDelta) {
+      if (Math.abs(x1 - x2) <= minDelta) {
         A = 1
         B = 0
         C = -x1

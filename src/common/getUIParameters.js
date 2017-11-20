@@ -4,7 +4,11 @@ function getUIParameters () {
   return {
     canvasPadding: drawContainer.style.padding.slice(0, -2) - 0,
     canvasLeft: canvasLayout.offsetLeft,
-    canvasTop: canvasLayout.offsetTop
+    canvasTop: canvasLayout.offsetTop,
+    canvasWidth: canvasLayout.offsetWidth,
+    canvasHeight: canvasLayout.offsetHeight,
+    canvasRight: canvasLayout.offsetLeft + canvasLayout.offsetWidth,
+    canvasBottom: canvasLayout.offsetTop + canvasLayout.offsetHeight
   }
 }
 

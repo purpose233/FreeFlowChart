@@ -44,6 +44,14 @@ function setToolState (type, element, value) {
       break;
     case 'linkerType':
     case 'arrowType':
+      let values = tools[type].styleValue
+      for (let i = 0; i < values.length; i++) {
+        if (value === values[i]) {
+          element.classList.remove(element.classList[1])
+          element.classList.add(tools[type].iconClass[i])
+          break;
+        }
+      }
   }
 }
 

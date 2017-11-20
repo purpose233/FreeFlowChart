@@ -4,6 +4,8 @@ import {calcPointToPointDistance, calcPointToLineDistance
   , calcPointToBezier} from "../core/calculation/calcDistance"
 import {calcPointToLineFoot} from "../core/calculation/calcPosition";
 import colors from '../common/colors'
+import _ from '../common/util'
+import {tools} from '../toolbar/toolbarDefaultSetting'
 
 let lineId = 0
 const lineAreaWidth = 7
@@ -56,8 +58,6 @@ class Line {
     let temp = lineSetting
 
     this.linkerType = temp.linkerType
-    this.linkerType = 'bezier'
-
     this.arrowType = temp.arrowType
 
     this.drawStyle = {
@@ -256,16 +256,29 @@ class Line {
     return [left, top, right - left, bottom - top]
   }
   drawArrow (angle, context) {
+    let fillStyle = this.drawStyle.strokeStyle
+    switch (this.arrowType) {
+      case 'solid':
+        fillStyle = this.drawStyle.strokeStyle
+        break;
+      case 'dashed':
+        fillStyle = '#FFFFFF'
+        break;
+    }
+
     context.translate(this.drawEndPosition.x, this.drawEndPosition.y)
     context.rotate(angle)
     context.beginPath()
     context.moveTo(0, 0)
-    context.lineTo(5, 14)
-    context.lineTo(-5, 14)
-    context.fillStyle = '#000000'
+    context.lineTo(4, 12)
+    context.lineTo(-4, 12)
+    context.closePath()
+    context.fillStyle = fillStyle
     context.fill()
+    context.stroke()
     context.rotate(-angle)
     context.translate(-this.drawEndPosition.x, -this.drawEndPosition.y)
+
   }
   drawReferMark (end, context) {
     let position
@@ -399,6 +412,56 @@ class Line {
     }
     if (this.dest.shape) {
       this.dest.shape.deleteLine(this)
+    }
+  }
+
+  resetLinkerArrowStyle (prop, value) {
+    if (prop === 'linkerType') {
+      this.linkerType = value
+      this.reCalcBezierControlPoints()
+      this.draw(null, true)
+    }
+    else {
+      this.arrowType = value
+      this.clearCanvas()
+      this.draw(null, true)
+    }
+  }
+  resetTextareaSingleStyle(prop, value) {
+  }
+  resetDrawSingleStyle(prop, value) {
+    if (_.containsProp(this.drawStyle, prop)) {
+      this.drawStyle[prop] = value
+      this.clearCanvas()
+      this.draw(null, true)
+    }
+  }
+  resetSingleStyle (prop, value) {
+    if (this[prop]) {
+      return this.resetLinkerArrowStyle(prop, value)
+    }
+    else if (_.contains(_.properties(this.textStyle), prop)) {
+      return this.resetTextareaSingleStyle(prop, value)
+    }
+    if (_.contains(_.properties(this.drawStyle), prop)) {
+      return this.resetDrawSingleStyle(prop, value)
+    }
+  }
+  getAllStyle () {
+    let style = {}
+    for (let prop in this.textStyle) { style[prop] = this.textStyle[prop] }
+    for (let prop in this.drawStyle) { style[prop] = this.drawStyle[prop] }
+    style.linkerType = this.linkerType
+    style.arrowType = this.arrowType
+    return style
+  }
+  getStyleOfType (type) {
+    let styleName = tools[type].styleName
+    if (this[type]) {
+      return this[type]
+    }
+    if (_.contains(_.properties(this.drawStyle), styleName)) {
+      return this.drawStyle[styleName]
     }
   }
 }

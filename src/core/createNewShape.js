@@ -20,7 +20,7 @@ function createNewLine (src, dist, settings) {
 
   component.innerHTML = `
     <canvas class="shape-canvas"></canvas>
-    <div class="shape-text" contenteditable="true"></div>`
+    <textarea class="shape-text" style="display: none;"></textarea>`
 
   let line = new (getShapeByType('line'))(component, src, dist, settings)
 

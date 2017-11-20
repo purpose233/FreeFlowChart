@@ -74,22 +74,32 @@ const tools = {
     hint: '线条样式',
     className: 'line-dash',
     styleName: 'lineDash',
-    styleValue: [[], [10, 5], [2, 3], [2, 5, 7, 5]],
-    iconClass: ['line-dash-solid', 'line-dash-dashed', 'line-dash-doted', 'line-dash-dashdoted']
+    styleValue: {
+      'solid': [],
+      'dashed': [10, 5],
+      'doted': [2, 3],
+      'dashdoted': [2, 5, 7, 5]
+    },
+    iconClass: {
+      'solid': 'line-dash-solid',
+      'dashed': 'line-dash-dashed',
+      'doted': 'line-dash-doted',
+      'dashdoted': 'line-dash-dashdoted'
+    }
   },
   'linkerType' : {
     hint: '连线类型',
     className: 'linker-type',
     styleName: 'linkerType',
-    styleValue: [],
-    iconClass: []
+    styleValue: ['straight', 'bezier'],
+    iconClass: ['linker-straight', 'linker-bezier']
   },
   'arrowType' : {
     hint: '箭头类型',
     className: 'arrow-type',
     styleName: 'arrowType',
-    styleValue: [],
-    iconClass: []
+    styleValue: ['solid', 'dashed'],
+    iconClass: ['arrow-solid', 'arrow-dashed']
   }
 }
 const simplyToolTypes = [

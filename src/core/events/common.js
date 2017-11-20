@@ -65,31 +65,34 @@ let eventCommon = {
         this.lineElements = this.lineElements.reverse()
       }
     },
-    reset: function () {
+    reset: function (line) {
       if (!this.el) {
         this.init()
       }
 
+      let endPositions = [line.src.position, line.dest.position]
+      let controlPositions = line.bezierControlPoints
       let linePosition = [], lineAngle = [], lineHeight = []
+
       linePosition[0] = {
-        x: (this.endPositions[0].x + this.controlPositions[0].x) / 2,
-        y: (this.endPositions[0].y + this.controlPositions[0].y) / 2
+        x: (endPositions[0].x + controlPositions[0].x) / 2,
+        y: (endPositions[0].y + controlPositions[0].y) / 2
       }
       linePosition[1] = {
-        x: (this.endPositions[1].x + this.controlPositions[1].x) / 2,
-        y: (this.endPositions[1].y + this.controlPositions[1].y) / 2
+        x: (endPositions[1].x + controlPositions[1].x) / 2,
+        y: (endPositions[1].y + controlPositions[1].y) / 2
       }
-      lineHeight[0] = calcPointToPointDistance(this.endPositions[0], this.controlPositions[0])
-      lineHeight[1] = calcPointToPointDistance(this.endPositions[1], this.controlPositions[1])
-      lineAngle[0] = -Math.atan((this.endPositions[0].x - this.controlPositions[0].x)
-        / (this.endPositions[0].y - this.controlPositions[0].y)) / Math.PI * 180
-      lineAngle[1] = -Math.atan((this.endPositions[1].x - this.controlPositions[1].x)
-        / (this.endPositions[1].y - this.controlPositions[1].y)) / Math.PI * 180
+      lineHeight[0] = calcPointToPointDistance(endPositions[0], controlPositions[0])
+      lineHeight[1] = calcPointToPointDistance(endPositions[1], controlPositions[1])
+      lineAngle[0] = -Math.atan((endPositions[0].x - controlPositions[0].x)
+        / (endPositions[0].y - controlPositions[0].y)) / Math.PI * 180
+      lineAngle[1] = -Math.atan((endPositions[1].x - controlPositions[1].x)
+        / (endPositions[1].y - controlPositions[1].y)) / Math.PI * 180
 
-      this.pointElements[0].style.left = this.controlPositions[0].x - 4 + 'px'
-      this.pointElements[0].style.top = this.controlPositions[0].y - 4 + 'px'
-      this.pointElements[1].style.left = this.controlPositions[1].x - 4 + 'px'
-      this.pointElements[1].style.top = this.controlPositions[1].y - 4 + 'px'
+      this.pointElements[0].style.left = controlPositions[0].x - 4 + 'px'
+      this.pointElements[0].style.top = controlPositions[0].y - 4 + 'px'
+      this.pointElements[1].style.left = controlPositions[1].x - 4 + 'px'
+      this.pointElements[1].style.top = controlPositions[1].y - 4 + 'px'
       this.lineElements[0].style.left = linePosition[0].x - 0.5 + 'px'
       this.lineElements[0].style.top = linePosition[0].y - 0.5 - lineHeight[0] / 2 + 'px'
       this.lineElements[1].style.left = linePosition[1].x - 0.5 + 'px'
@@ -98,19 +101,6 @@ let eventCommon = {
       this.lineElements[1].style.height = lineHeight[1] + 'px'
       this.lineElements[0].style.transform = `rotate(${lineAngle[0]}deg)`
       this.lineElements[1].style.transform = `rotate(${lineAngle[1]}deg)`
-    },
-    resetPositions: function (srcPosition, destPosition, controlAPosition, controlBPosition) {
-      this.endPositions = [srcPosition, destPosition]
-      this.controlPositions = [controlAPosition, controlBPosition]
-      this.reset()
-    },
-    resetSrcControlPositions: function (position) {
-      this.controlPositions[0] = position
-      this.reset()
-    },
-    resetDestControlPositions: function (position) {
-      this.controlPositions[1] = position
-      this.reset()
     },
     setVisibility: function (visibility) {
       if (!this.el) {
@@ -241,6 +231,7 @@ let eventCommon = {
       || parentContainsClass(el, 'toolbar-button')
       || el.classList.contains('dropdown-menu')
       || parentContainsClass(el, 'dropdown-menu')
+      || parentContainsClass(el.parentNode, 'dropdown-menu')
       || el.getAttribute && el.getAttribute('id') === 'color-picker'
       || el.classList.contains && el.classList.contains('color-column')
       || parentContainsClass(el, 'color-column')
@@ -309,7 +300,8 @@ let eventCommon = {
     //              tool
   },
   judgeEventOnToolbar: function (event) {
-    let el = event.target, type, value, isTool = false
+    let el = event.target, type, value, data
+    let isTool = false
 
     if (el.classList.contains('disabled') || parentContainsClass(el, 'disabled')) {
       value = type = null
@@ -321,17 +313,17 @@ let eventCommon = {
       isTool = true
       value = null
     }
-    else if (parentContainsClass(el, 'dropdown-menu')) {
+    else if (parentContainsClass(el, 'dropdown-menu')
+      || parentContainsClass(el.parentNode, 'dropdown-menu')) {
       isTool = true
       type = 'setValue'
-      if (this.toolbarData.type === 'lineDash'
-        || this.toolbarData.type === 'linkerType'
-        || this.toolbarData.type === 'arrowType') {
-        let selectedIndex = el.getAttribute('data-index')
-        value = tools[this.toolbarData.type].styleValue[parseInt(selectedIndex)]
+      data = (parentContainsClass(el, 'dropdown-menu')) ?
+        el.getAttribute('data') : el.parentNode.getAttribute('data')
+      if (this.toolbarData.type === 'lineDash') {
+        value = tools[this.toolbarData.type].styleValue[data]
       }
       else {
-        value = el.getAttribute('data')
+        value = data
       }
     }
     // Consider the color picker.

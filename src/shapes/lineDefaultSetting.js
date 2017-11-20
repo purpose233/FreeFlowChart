@@ -2,7 +2,7 @@ import colors from '../common/colors'
 
 let lineSetting = {
   linkerType: 'straight',
-  arrowType: 'basic'
+  arrowType: 'solid'
 }
 
 let drawingDefaultSetting = {

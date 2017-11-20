@@ -24,6 +24,7 @@ function simpleToolHandler (type, el, shape) {
 
 function showTypeMenu (type, element, value) {
   let menu, options
+  let data
 
   switch (type) {
     case 'fontFamily':
@@ -65,15 +66,15 @@ function showTypeMenu (type, element, value) {
       menu = document.getElementById('menu-' + tools[type].className)
       if (!menu) { return }
       options = menu.getElementsByTagName('li')
-      let selectedIndex = 0
-      for (let i = 0; i < options.length; i++) {
-        if (_.compare(tools[type].styleValue[i], value)) {
-          selectedIndex = i
+
+      for (let p in tools[type].styleValue) {
+        if (_.compare(tools[type].styleValue[p], value)) {
+          data = p
         }
       }
+
       for (let i = 0; i < options.length; i++) {
-        let index = options[i].getAttribute('data-index')
-        if (parseInt(index) === selectedIndex) {
+        if (options[i].getAttribute('data') === data) {
           options[i].classList.add('option-selected')
           options[i].innerHTML = `<div class="icon selected"></div>` + options[i].innerHTML
         }
@@ -81,6 +82,18 @@ function showTypeMenu (type, element, value) {
       break;
     case 'linkerType':
     case 'arrowType':
+      menu = document.getElementById('menu-' + tools[type].className)
+      if (!menu) { return }
+      options = menu.getElementsByTagName('li')
+
+      for (let i = 0; i < options.length; i++) {
+        let data = options[i].getAttribute('data')
+        if (data === value) {
+          options[i].classList.add('option-selected')
+          options[i].innerHTML = `<div class="icon selected"></div>` + options[i].innerHTML
+        }
+      }
+      break;
   }
   menu.style.left = element.offsetLeft + 'px'
   menu.style.top = element.offsetTop + element.offsetHeight + 'px'
@@ -111,6 +124,7 @@ function toolbarEventOnMouseDown (event, shapeList) {
   let judgeResult = eventCommon.judgeEventOnToolbar(event)
   let type = judgeResult.type
   let shape = eventCommon.activeShape || eventCommon.selectedShape
+    || eventCommon.lineData.activeLine || eventCommon.lineData.selectedLine
 
   if (type) {
     if (eventCommon.toolbarData.type === type) { return }

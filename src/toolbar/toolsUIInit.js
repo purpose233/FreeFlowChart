@@ -71,10 +71,11 @@ function getToolHtml (type) {
           <div class="icon dropdown"></div>
         </div>` + dropdownHtml
     case 'lineDash':
+      let properties = _.properties(values)
       dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
-      for (let i = 0; i < values.length; i++) {
-        dropdownHtml += `<li data-index="${i}">
-            <div class="icon ${tools[type].iconClass[i]}"></div>
+      for (let i = 0; i < properties.length; i++) {
+        dropdownHtml += `<li data="${properties[i]}">
+            <div class="icon ${tools[type].iconClass[properties[i]]}"></div>
           </li>`
       }
       dropdownHtml += `</ul>`
@@ -86,6 +87,33 @@ function getToolHtml (type) {
         </div>` + dropdownHtml
     case 'linkerType':
     case 'arrowType':
+      dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="display: none">`
+      for (let i = 0; i < values.length; i++) {
+        dropdownHtml += `<li data="${values[i]}">
+            <div class="icon ${tools[type].iconClass[i]}"></div>
+          </li>`
+      }
+      dropdownHtml += `</ul>`
+      return `<div id="tool-${tools[type].className}"
+        class="toolbar-button disabled"
+        hint-data="${tools[type].hint}">
+          <div class="icon ${tools[type].iconClass[0]}"></div>
+          <div class="icon dropdown"></div>
+        </div>` + dropdownHtml
+
+      // dropdownHtml = `<ul id="menu-${tools[type].className}" class="dropdown-menu" style="">`
+      // for (let i = 0; i < values.length; i++) {
+      //   dropdownHtml += `<li data="${values[i]}">
+      //       <div class="icon ${tools[type].iconClass[i]}"></div>
+      //     </li>`
+      // }
+      // dropdownHtml += `</ul>`
+      // return `<div id="tool-${tools[type].className}"
+      //   class="toolbar-button disabled"
+      //   hint-data="${tools[type].hint}">
+      //     <div class="icon ${tools[type].iconClass[0]}"></div>
+      //     <div class="icon dropdown"></div>
+      //   </div>` + dropdownHtml
   }
   return ''
 }

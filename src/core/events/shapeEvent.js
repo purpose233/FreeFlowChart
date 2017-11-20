@@ -65,8 +65,7 @@ function shapeEventOnMouseDown (event, shapeList) {
       shape.draw(null, true)
 
       if (shape.linkerType === 'bezier') {
-        eventCommon.bezierController.resetPositions(shape.src.position, shape.dest.position
-          , shape.bezierControlPoints[0], shape.bezierControlPoints[1])
+        eventCommon.bezierController.reset(shape)
         eventCommon.bezierController.setVisibility(true)
       }
 
@@ -117,8 +116,7 @@ function shapeEventOnMouseDown (event, shapeList) {
       }
 
       if (shape.linkerType === 'bezier') {
-        eventCommon.bezierController.resetPositions(shape.src.position, shape.dest.position
-          , shape.bezierControlPoints[0], shape.bezierControlPoints[1])
+        eventCommon.bezierController.reset(shape)
         eventCommon.bezierController.setVisibility(true)
       }
 
@@ -247,8 +245,7 @@ function shapeEventOnMouseMove (event, shapeList) {
 
       let line = eventCommon.lineData.activeLine
       if (line.linkerType === 'bezier') {
-        eventCommon.bezierController.resetPositions(line.src.position, line.dest.position
-          , line.bezierControlPoints[0], line.bezierControlPoints[1])
+        eventCommon.bezierController.reset(line)
         eventCommon.bezierController.setVisibility(true)
       }
     }
@@ -309,12 +306,12 @@ function shapeEventOnMouseMove (event, shapeList) {
   else if (activeBezierPoint) {
     let endType = activeBezierPoint.getAttribute('end')
     if (endType === 'src') {
-      eventCommon.bezierController.resetSrcControlPositions(position)
       eventCommon.lineData.selectedLine.resetBezierSrcControl(position)
+      eventCommon.bezierController.reset(eventCommon.lineData.selectedLine)
     }
     else {
-      eventCommon.bezierController.resetDestControlPositions(position)
       eventCommon.lineData.selectedLine.resetBezierDestControl(position)
+      eventCommon.bezierController.reset(eventCommon.lineData.selectedLine)
     }
     eventCommon.lineData.selectedLine.draw(null, true)
   }
@@ -352,9 +349,16 @@ function shapeEventOnMouseMove (event, shapeList) {
 }
 
 function shapeEventOnMouseUp (event, shapeList) {
-  if (!eventCommon.lineData.selectedLine) {
+  if (!eventCommon.lineData.selectedLine
+    || eventCommon.lineData.selectedLine.linkerType !== 'bezier') {
     eventCommon.bezierController.setVisibility(false)
   }
+  else if (eventCommon.bezierController.visibility === false
+    && eventCommon.lineData.selectedLine.linkerType === 'bezier') {
+    eventCommon.bezierController.reset(eventCommon.lineData.selectedLine)
+    eventCommon.bezierController.setVisibility(true)
+  }
+
 
   if (eventCommon.lineData.isActive) {
     let line = eventCommon.lineData.activeLine
