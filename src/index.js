@@ -25,7 +25,7 @@ import _ from './common/util'
         'fillStyle', 'strokeStyle', 'lineWidth', 'lineDash',
         'linkerType', 'arrowType'
       ],
-      hint: true
+      //hint: true
     }
   }
 

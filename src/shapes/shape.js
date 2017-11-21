@@ -36,6 +36,9 @@ class Shape {
       this[shapeProps[i]] = (settings && typeof settings[shapeProps[i]] !== 'undefined')
         ? _.clone(settings[shapeProps[i]], true) : getPropDefault(shapeProps[i], this.type)
     }
+    if (this.shapeText && settings) {
+      this.shapeText.value = settings.text ? settings.text : ''
+    }
 
     // Although the padding is a member variable of shape,
     // it cannot be reset. The only reason why it is a member variable
@@ -85,7 +88,7 @@ class Shape {
     let textLeft = this.shapeText.offsetLeft - this.shapeText.offsetWidth / 2
     let textTop = this.shapeText.offsetTop - this.shapeText.offsetHeight / 2
     let font = this.textStyle.fontStyle + ' ' + this.textStyle.fontWeight + ' '
-      + this.textStyle.textDecoration + ' ' + this.textStyle.fontSize + ' ' + this.textStyle.fontFamily
+       + this.textStyle.fontSize + ' ' + this.textStyle.fontFamily
     context.font = font
     context.fillStyle = this.textStyle.color
     let lineHeight = parseInt(this.textStyle.fontSize.slice(0, -2)) / 0.75

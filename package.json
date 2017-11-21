@@ -1,6 +1,6 @@
 {
   "name": "free-flow-chart",
-  "version": "1.0.0",
+  "version": "0.4.1",
   "description": "A simple framework for drawing flow charts.",
   "main": "./dist/FreeFlowChart.min.js",
   "scripts": {
