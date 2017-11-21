@@ -19,11 +19,6 @@ class Process extends Shape {
     context.rect(horizontal, vertical, this.width - 2 * horizontal, this.height - 2 * vertical);
     context.stroke()
   }
-  drawOnOtherCanvas (context, left, top) {
-    context.translate(left, top)
-    this.draw(null, null, context)
-    context.translate(-left, -top)
-  }
   isPositionInShape (x, y) {
     return (x > this.left + this.padding && x < this.left + this.width - this.padding
       && y > this.top + this.padding && y < this.top + this.height - this.padding)
@@ -171,25 +166,10 @@ class Process extends Shape {
       position: position
     }
   }
-  resetLinesPosition () {
-    let lineData, position
-    for (let i = 0; i < this.relativeLines.length; i++) {
-      lineData = this.relativeLines[i]
-      position = this.calcLinePosition(lineData.referPosition, lineData.referPercent)
-      if (lineData.type === 'src') {
-        lineData.line.resetSrcPosition(position)
-        lineData.line.draw()
-      }
-      else {
-        lineData.line.resetDestPosition(position)
-        lineData.line.draw()
-      }
-    }
-  }
 }
 
 // Basically, each shape behaves like this one
 // and these function must be contained for calling:
-// draw, judgeInShape, getLineReference, resetLinesPosition, drawOnOtherCanvas
+// draw, judgeInShape, getLineReference
 
 export default Process

@@ -40,11 +40,6 @@ class Decision extends Shape {
     context.fill()
     context.stroke()
   }
-  drawOnOtherCanvas (context, left, top) {
-    context.translate(left, top)
-    this.draw(null, null, context)
-    context.translate(-left, -top)
-  }
   isPositionInShape (x, y) {
     let points = this.calcShapePoints()
     let lineResult = calcBorderLineResult(x, y, points)
@@ -183,21 +178,6 @@ class Decision extends Shape {
       referPosition: referPosition,
       referPercent: referPercent,
       position: position
-    }
-  }
-  resetLinesPosition () {
-    let lineData, position
-    for (let i = 0; i < this.relativeLines.length; i++) {
-      lineData = this.relativeLines[i]
-      position = this.calcLinePosition(lineData.referPosition, lineData.referPercent)
-      if (lineData.type === 'src') {
-        lineData.line.resetSrcPosition(position)
-        lineData.line.draw()
-      }
-      else {
-        lineData.line.resetDestPosition(position)
-        lineData.line.draw()
-      }
     }
   }
 }

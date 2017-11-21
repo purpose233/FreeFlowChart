@@ -8,13 +8,10 @@
 <div id="draw-tools"></div>
 <div id="draw-main"></div>
 
-<button id="test">test</button>
-<div id="test-div"></div>
+<button id="test2">生成model</button>
 
-<!--<canvas id="bezier-test"-->
-        <!--style="position: absolute;left: 0;top: 0;-->
-        <!--width: 1000px;height: 1000px; z-index:1">-->
-<!--</canvas>-->
+<button id="test">生成图片</button>
+<div id="test-div"></div>
 
 <script src="../dist/FreeFlowChart.js"></script>
 <script>
@@ -27,7 +24,13 @@
 
     document.getElementById('test').onclick = () => {
       let image = flowChart.generateImage()
-      document.getElementById('test-div').appendChild(image)
+      if (image) {
+        document.getElementById('test-div').appendChild(image)
+      }
+    }
+
+    document.getElementById('test2').onclick = () => {
+      console.log(flowChart.getModel())
     }
 </script>
 </body>

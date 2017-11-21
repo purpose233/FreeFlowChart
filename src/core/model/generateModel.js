@@ -36,11 +36,11 @@ function getModelofShape (shape, index, lines, idMap) {
 
 function getModelofLine (line, index, shapes, idMap) {
   let src = {
-    'shapeIndex': idMap[line.src.shape.id],
+    'shapeIndex': line.src.shape ? idMap[line.src.shape.id] : null,
     'position': line.src.position
   }
   let dest = {
-    'shapeIndex': idMap[line.dest.shape.id],
+    'shapeIndex': line.dest.shape ? idMap[line.dest.shape.id] : null,
     'position': line.dest.position
   }
   return {
@@ -66,7 +66,7 @@ function generateModel (shapeList) {
     lines: []
   }
 
-  let lineModel, shapeModel, idMap = {}
+  let idMap = {}
   let shapes = [], lines = []
 
   let lineIndex = 0, shapeIndex = 0
@@ -83,10 +83,10 @@ function generateModel (shapeList) {
 
   for (let i = 0; i < Math.max(shapes.length, lines.length); i++) {
     if (shapes[i]) {
-      model.push(getModelofShape(shapes[i], i, lines, idMap))
+      model.shapes.push(getModelofShape(shapes[i], i, lines, idMap))
     }
     if (lines[i]) {
-      model.push(getModelofLine(lines[i], i, shapes, idMap))
+      model.lines.push(getModelofLine(lines[i], i, shapes, idMap))
     }
   }
 

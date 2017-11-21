@@ -101,11 +101,6 @@ class Terminator extends Shape {
     context.stroke()
     context.scale(1 / this.calcWidthHeightRatio(), 1)*/
   }
-  drawOnOtherCanvas (context, left, top) {
-    context.translate(left, top)
-    this.draw(null, null, context)
-    context.translate(-left, -top)
-  }
   isPositionInShape (x, y) {
     return isInTerminalShape(x, y, this.left + this.padding, this.top + this.padding
       , this.width - 2 * this.padding, this.height - 2 * this.padding, this.calcWidthHeightRatio())
@@ -230,21 +225,6 @@ class Terminator extends Shape {
       referPosition: referPosition,
       referPercent: referPercent,
       position: position
-    }
-  }
-  resetLinesPosition () {
-    let lineData, position
-    for (let i = 0; i < this.relativeLines.length; i++) {
-      lineData = this.relativeLines[i]
-      position = this.calcLinePosition(lineData.referPosition, lineData.referPercent)
-      if (lineData.type === 'src') {
-        lineData.line.resetSrcPosition(position)
-        lineData.line.draw()
-      }
-      else {
-        lineData.line.resetDestPosition(position)
-        lineData.line.draw()
-      }
     }
   }
 }

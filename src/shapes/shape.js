@@ -1,6 +1,7 @@
 import {getDefaultSetting, drawingDefaultSetting, textDefaultSetting, defaultPadding} from './shapeDefaultSetting'
 import _ from '../common/util'
 import {tools} from "../toolbar/toolbarDefaultSetting";
+import drawText from '../draw/text'
 
 let shapeId = 0
 
@@ -67,6 +68,24 @@ class Shape {
     this.canvas.width = this.width
   }
   draw () {}
+  drawOnOtherCanvas (context, left, top) {
+    context.translate(left, top)
+    this.draw(null, null, context)
+
+    // For now, the position of text is based on top and left 50%.
+    // Need to be modified.
+    let textLeft = this.shapeText.offsetLeft - this.shapeText.offsetWidth / 2
+    let textTop = this.shapeText.offsetTop - this.shapeText.offsetHeight / 2
+    let font = this.textStyle.fontStyle + ' ' + this.textStyle.fontWeight + ' '
+      + this.textStyle.textDecoration + ' ' + this.textStyle.fontSize + ' ' + this.textStyle.fontFamily
+    context.font = font
+    context.fillStyle = this.textStyle.color
+    let lineHeight = parseInt(this.textStyle.fontSize.slice(0, -2)) / 0.75
+    drawText(context, this.shapeText.value, textLeft, textTop
+      , this.shapeText.offsetWidth, lineHeight)
+
+    context.translate(-left, -top)
+  }
   setPosition (left, top) {
     this.left = left
     this.top = top
@@ -167,6 +186,22 @@ class Shape {
     }
     if (_.contains(_.properties(this.drawStyle), styleName)) {
       return this.drawStyle[styleName]
+    }
+  }
+  calcLinePosition (referPosition, referPercent) {}
+  resetLinesPosition () {
+    let lineData, position
+    for (let i = 0; i < this.relativeLines.length; i++) {
+      lineData = this.relativeLines[i]
+      position = this.calcLinePosition(lineData.referPosition, lineData.referPercent)
+      if (lineData.type === 'src') {
+        lineData.line.resetSrcPosition(position)
+        lineData.line.draw()
+      }
+      else {
+        lineData.line.resetDestPosition(position)
+        lineData.line.draw()
+      }
     }
   }
 }
