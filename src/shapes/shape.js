@@ -5,38 +5,42 @@ import drawText from '../draw/text'
 
 let shapeId = 0
 
+const shapeProps = ['left', 'top', 'width', 'height'
+  , 'drawStyle', 'textStyle', 'relativeLines']
+
+function getPropDefault (prop, type) {
+  let defaultSetting = getDefaultSetting(type)
+
+  switch (prop) {
+    case 'left': return 0
+    case 'top': return 0
+    case 'width': return defaultSetting.width
+    case 'height': return defaultSetting.height
+    case 'drawStyle': return _.clone(drawingDefaultSetting)
+    case 'textStyle': return _.clone(textDefaultSetting)
+    case 'relativeLines': return []
+  }
+}
+
 class Shape {
-  constructor (el, type, left, top, width, height, drawStyle, textStyle) {
+  constructor (el, type, settings) {
     this.id = 'shape' + shapeId++
     this.el = el
     this.canvas = el.getElementsByTagName('canvas')[0]
     this.shapeText = el.getElementsByClassName('shape-text')[0]
     this.context = this.canvas.getContext('2d')
     this.type = type
-    this.left = left
-    this.top = top
+    this.shapeName = getDefaultSetting(this.type).shapeName
 
-    let temp = getDefaultSetting(this.type)
-    this.shapeName = temp.shapeName
-    if (typeof width !== 'undefined' && width !== null
-      && typeof height !== 'undefined' && height !== null) {
-      this.width = width
-      this.height = height
+    for (let i = 0; i < shapeProps.length; i++) {
+      this[shapeProps[i]] = (settings && typeof settings[shapeProps[i]] !== 'undefined')
+        ? _.clone(settings[shapeProps[i]], true) : getPropDefault(shapeProps[i], this.type)
     }
-    else {
-      this.width = temp.width
-      this.height = temp.height
-    }
-
-    this.drawStyle = drawStyle ? drawStyle : _.clone(drawingDefaultSetting)
-    this.textStyle = textStyle ? textStyle : _.clone(textDefaultSetting)
 
     // Although the padding is a member variable of shape,
     // it cannot be reset. The only reason why it is a member variable
     // is that it need to be used in child class.
     this.padding = defaultPadding
-
-    this.relativeLines = []
 
     this.init()
   }
@@ -49,25 +53,29 @@ class Shape {
     this.el.style.height = this.height + 'px'
     this.canvas.width = this.width
     this.canvas.height = this.height
+    if (typeof this.left !== 'undefined'
+      && typeof this.top !== 'undefined') {
+      this.setPosition(this.left, this.top)
+    }
     //this.context.lineCap = 'round'
     //this.context.lineJoin = 'round'
 
     this.setTextareaStyle()
   }
   append () {
-    let parent = document.getElementById('designer_canvas')
-    let sibling = document.getElementById('shape_controls')
+    let parent = document.getElementById('designer-canvas')
+    let sibling = document.getElementById('shape-controls')
 
     parent.insertBefore(this.el, sibling)
   }
   remove () {
-    let parent = document.getElementById('designer_canvas')
+    let parent = document.getElementById('designer-canvas')
     parent.removeChild(this.el)
   }
   clearCanvas () {
     this.canvas.width = this.width
   }
-  draw () {}
+  draw (paddingHorizontal, paddingVertical, drawContext) {}
   drawOnOtherCanvas (context, left, top) {
     context.translate(left, top)
     this.draw(null, null, context)
@@ -85,6 +93,9 @@ class Shape {
       , this.shapeText.offsetWidth, lineHeight)
 
     context.translate(-left, -top)
+  }
+  setPositionStyle (position) {
+    this.el.style.position = position
   }
   setPosition (left, top) {
     this.left = left

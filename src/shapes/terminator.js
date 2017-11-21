@@ -52,8 +52,8 @@ function judgeInShapeArea (x, y, left, top, width, height) {
 }
 
 class Terminator extends Shape {
-  constructor (el, type, left, top, width, height) {
-    super(el, type, left, top, width, height)
+  constructor (el, type, settings) {
+    super(el, type, settings)
   }
   draw (paddingHorizontal, paddingVertical, drawContext) {
     let horizontal = (typeof paddingHorizontal === 'undefined' || paddingHorizontal === null)

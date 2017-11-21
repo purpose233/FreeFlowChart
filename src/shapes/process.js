@@ -1,8 +1,8 @@
 import Shape from './shape'
 
 class Process extends Shape {
-  constructor (el, type, left, top, width, height) {
-    super(el, type, left, top, width, height)
+  constructor (el, type, settings) {
+    super(el, type, settings)
   }
   draw (paddingHorizontal, paddingVertical, drawContext) {
     // Note that only the padding of the component is not default.

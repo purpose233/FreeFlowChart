@@ -12,7 +12,7 @@ function dragNewComponentMouseDown (event, shapeList) {
   let shapeName = event.target.parentNode.getAttribute('shapename')
 
   currentShape = createNewShape(shapeName)
-  currentShape.el.style.position = 'fixed'
+  currentShape.setPositionStyle('fixed')
   currentShape.setPosition(event.clientX - currentShape.width / 2, event.clientY - currentShape.height / 2)
   currentShape.draw()
   currentShape.append()
@@ -44,7 +44,7 @@ function dragNewComponetMouseUp (event, shapeList) {
     let top = position.y - currentShape.height / 2
 
     currentShape.setPosition(left, top)
-    currentShape.el.style.position = 'absolute'
+    currentShape.setPositionStyle('absolute')
     shapeList.push(currentShape)
   }
 

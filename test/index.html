@@ -8,8 +8,9 @@
 <div id="draw-tools"></div>
 <div id="draw-main"></div>
 
-<button id="test2">生成model</button>
-
+<button id="test2">获得model</button>
+<button id="test3">添加model</button>
+<button id="test4">重设model</button>
 <button id="test">生成图片</button>
 <div id="test-div"></div>
 
@@ -21,6 +22,7 @@
         el: '#draw-tools'
       }
     })
+    let model
 
     document.getElementById('test').onclick = () => {
       let image = flowChart.generateImage()
@@ -30,7 +32,16 @@
     }
 
     document.getElementById('test2').onclick = () => {
-      console.log(flowChart.getModel())
+      model = flowChart.getModel()
+      console.log(model)
+    }
+
+    document.getElementById('test3').onclick = () => {
+      flowChart.addModel(model)
+    }
+
+    document.getElementById('test4').onclick = () => {
+      flowChart.setModel(model)
     }
 </script>
 </body>

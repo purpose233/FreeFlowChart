@@ -104,14 +104,14 @@ _.containsProp = function (list, prop) {
   return false
 }
 
-_.clone = function (o) {
+_.clone = function (o, notDeep) {
   let clone
   if (_.isArray(o)) { clone = [] }
   else if (_.isObject(o)) { clone = {} }
   else { return o }
 
   for (let prop in o) {
-    if (_.isObject(o[prop])) {
+    if (!notDeep && _.isObject(o[prop])) {
       clone[prop] = _.clone(o[prop])
     }
     else {

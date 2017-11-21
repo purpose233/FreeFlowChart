@@ -1,6 +1,7 @@
 import './style/freeFlowChart.scss'
 import generateImage from './core/generateImage'
 import generateModel from './core/model/generateModel'
+import parseModel from './core/model/parseModel'
 import init from './init'
 import _ from './common/util'
 
@@ -95,11 +96,23 @@ import _ from './common/util'
     getModel () {
       return generateModel(this.shapeList)
     }
-    addModel () {
-
+    addModel (model) {
+      let addShapes = parseModel(model)
+      for (let i = 0; i < addShapes.length; i++) {
+        addShapes[i].append()
+        addShapes[i].draw(null, null, null)
+        this.shapeList.push(addShapes[i])
+      }
     }
     setModel () {
-
+      this.clear()
+      this.addModel(model)
+    }
+    clear () {
+      for (let i = 0; i < this.shapeList.length; i++) {
+        this.shapeList[i].destruct()
+      }
+      this.shapeList.splice(0, this.shapeList.length)
     }
   }
 

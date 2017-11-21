@@ -13,25 +13,17 @@ const lineAreaWidth = 7
 // that it can be used while judging whether
 // two floating numbers are equal.
 const delta = 0.1
+const lineProps = ['linkerType', 'arrowType', 'drawStyle', 'textStyle', 'bezierControlPoints']
 
-// Cubic bezier curve:
-// begin point: (x0,y0), control points: (x1,y1), (x2,y2), end point: (x3,y3)
-// x(t) = ax * t ^ 3 + bx * t ^ 2 + cx * t + x0
-// y(t) = ay * t ^ 3 + by * t ^ 2 + cy * t + y0
-// x1 = x0 + cx / 3
-// x2 = x1 + ( cx + bx ) / 3
-// x3 = x0 + cx + bx + ax
-// y1 = y0 + cy / 3
-// y2 = y1 + ( cy + by ) / 3
-// y3 = y0 + cy + by + ay
-// cx = 3 * ( x1 - x0 )
-// bx = 3 * ( x2 - x1 ) - cx
-// ax = x3 - x0 - cx - bx
-// cy = 3 * ( y1 - y0 )
-// by = 3 * ( y2 - y1 ) - cy
-// ay = y3 - y0 - cy - by
-// x(t) = (1-t)^3x0 + 3t(1-t)^2x1 + 3t^2(1-t)x2 + t^3x3
-// y(t) = (1-t)^3y0 + 3t(1-t)^2y1 + 3t^2(1-t)y2 + t^3y3
+function getPropDefault (prop) {
+  switch (prop) {
+    case 'linkerType': return lineSetting.linkerType
+    case 'arrowType': return lineSetting.arrowType
+    case 'drawStyle': return _.clone(drawingDefaultSetting)
+    case 'textStyle': return _.clone(textDefaultSetting)
+    case 'bezierControlPoints': return []
+  }
+}
 
 class Line {
   constructor (el, src, dest, settings) {
@@ -49,26 +41,14 @@ class Line {
     this.height = 0
     this.left = 0
     this.top = 0
-
     this.padding = defaultPadding
-
-    if (settings) {
-
-    }
-    let temp = lineSetting
-
-    this.linkerType = temp.linkerType
-    this.arrowType = temp.arrowType
-
-    this.drawStyle = {
-      strokeStyle: drawingDefaultSetting.strokeStyle,
-      lineWidth: drawingDefaultSetting.lineWidth,
-      lineDash: drawingDefaultSetting.lineDash
-    }
-
     this.drawBeginPosition = {}
     this.drawEndPosition = {}
-    this.bezierControlPoints = []
+
+    for (let i = 0; i < lineProps.length; i++) {
+      this[lineProps[i]] = (settings && typeof settings[lineProps[i]] !== 'undefined')
+        ? _.clone(settings[lineProps[i]], true) : getPropDefault(lineProps[i], this.type)
+    }
 
     this.init()
   }
@@ -165,13 +145,13 @@ class Line {
     this.el.style.top = y + 'px'
   }
   append () {
-    let parent = document.getElementById('designer_canvas')
-    let sibling = document.getElementById('shape_controls')
+    let parent = document.getElementById('designer-canvas')
+    let sibling = document.getElementById('shape-controls')
 
     parent.insertBefore(this.el, sibling)
   }
   remove () {
-    let parent = document.getElementById('designer_canvas')
+    let parent = document.getElementById('designer-canvas')
     parent.removeChild(this.el)
   }
   setDrawStyle (context) {

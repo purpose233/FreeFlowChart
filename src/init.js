@@ -8,7 +8,7 @@ const drawContainerHtml = `<div class="draw-main">
     </div>
     <div id="draw-layout">
         <div id="draw-container" style="padding:1000px;">
-            <div id="designer_canvas">
+            <div id="designer-canvas">
                 <canvas id="canvas-background"></canvas>
                 <div id="shape-controls">
                     <canvas id="controls-bounding" width="120" height="90"></canvas>
@@ -49,7 +49,8 @@ function createComponets (el, shapes) {
   let componentItems = document.getElementsByClassName('component-box')
   for (let i = 0; i < shapes.length; i++) {
     let shapeName = shapes[i]
-    let shape = new (getShapeByType(shapeName))(componentItems[i], shapes[i], -1, -1, 30, 30)
+    let shape = new (getShapeByType(shapeName))(componentItems[i], shapes[i]
+      , {left: -1, top: -1, width: 30, height: 30})
     shape.draw(2, 5)
   }
 }

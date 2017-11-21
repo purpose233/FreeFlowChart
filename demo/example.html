@@ -1,10 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<div id="draw-tools"></div>
+<div id="draw-main"></div>
 
+<button id="test1">获得model</button>
+<button id="test2">添加model</button>
+<button id="test3">重设model</button>
+<button id="test4">生成图片</button>
+<div id="test-div"></div>
+
+<script src="../dist/FreeFlowChart.min.js"></script>
+<script>
+  let flowChart = FreeFlowChart({
+    el: '#draw-main',
+    toolbar: {
+      el: '#draw-tools'
+    }
+  })
+  let model
+
+  document.getElementById('test1').onclick = () => {
+    model = flowChart.getModel()
+    console.log(model)
+  }
+
+  document.getElementById('test2').onclick = () => {
+    flowChart.addModel(model)
+  }
+
+  document.getElementById('test3').onclick = () => {
+    flowChart.setModel(model)
+  }
+
+  document.getElementById('test4').onclick = () => {
+    let image = flowChart.generateImage()
+    if (image) {
+      document.getElementById('test-div').appendChild(image)
+    }
+  }
+</script>
 </body>
 </html>
